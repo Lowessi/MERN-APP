@@ -1,8 +1,8 @@
 const Landing = () => {
   return (
     <div>
-      Lnding
       <div></div>
+      Lnding
     </div>
   );
 };

@@ -39,13 +39,12 @@ const Login = () => {
 
   return (
     <div className="bg-[#f3f4f6] min-h-screen">
-      <Nav />
       <div className="flex justify-center items-center mt-10">
         <form
           onSubmit={onSubmit}
           className="shadow-md flex flex-col gap-5 items-center p-8 rounded-lg bg-white w-full max-w-md"
         >
-          <h1 className="text-3xl font-semibold text-green-600">Login</h1>
+          <h1 className="text-3xl font-semibold text-green-600">Sign In</h1>
 
           <label htmlFor="email" className="flex flex-col w-full">
             Email

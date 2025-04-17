@@ -1,48 +1,52 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <div className="py-3 border-b border-b-[#597445] bg-white shadow-md sticky top-0 z-50">
       <nav className="flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo */}
-        <div className="text-2xl font-semibold text-green-600">Pablo Job</div>
+        <div className="text-2xl font-semibold text-green-600">
+          <Link to="/">Pablo Job</Link>
+        </div>
 
         {/* Desktop Links */}
         <div className="hidden md:flex gap-10 items-center">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Home
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/jobs"
             className="text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Jobs
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/post-job"
             className="text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Post a Job
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/contact"
             className="text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Contact
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/about"
             className="text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             About us
-          </a>
+          </Link>
 
           <section className="flex gap-5 pl-5">
             <button
@@ -74,46 +78,57 @@ const Navbar = () => {
       {/* Mobile Dropdown */}
       {menuOpen && (
         <div className="md:hidden mt-4 px-4 space-y-3">
-          <a
-            href="#"
+          <Link
+            to="/"
+            onClick={closeMenu}
             className="block text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Home
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/jobs"
+            onClick={closeMenu}
             className="block text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Jobs
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/post-job"
+            onClick={closeMenu}
             className="block text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             Post a Job
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/contact"
+            onClick={closeMenu}
             className="block text-[#597445] hover:text-[#4a6735] hover:underline"
           >
-            Contacts
-          </a>
-          <a
-            href="#"
+            Contact
+          </Link>
+          <Link
+            to="/about"
+            onClick={closeMenu}
             className="block text-[#597445] hover:text-[#4a6735] hover:underline"
           >
             About us
-          </a>
+          </Link>
 
           <div className="pt-3 space-y-2">
             <button
-              onClick={() => navigate("/register")}
+              onClick={() => {
+                closeMenu();
+                navigate("/register");
+              }}
               className="w-full border border-[#597445] p-2 rounded-xl bg-[#597445] text-white hover:bg-[#4a6735] transition"
             >
               Join now
             </button>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                closeMenu();
+                navigate("/login");
+              }}
               className="w-full border border-[#597445] p-2 rounded-xl text-[#597445] hover:bg-[#f0f8e0] transition"
             >
               Signin

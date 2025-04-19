@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Nav = () => {
   return (
     <div>
-      <nav className="flex justify-between p-5 items-center bg-[#f3f4f6] ">
+      <nav className="flex justify-between p-5 items-center font-semibold text-green-600 bg-[#f3f4f6] ">
         <div className="flex pl-50">
           <h1 className="text-[30px]">PABLO JOB</h1>
         </div>

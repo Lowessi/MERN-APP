@@ -3,7 +3,7 @@ import Navbar from "../Navbar";
 
 const LandingLayout = () => {
   return (
-    <div className=" bg-green-50">
+    <div className=" ">
       <Navbar />
 
       <div>

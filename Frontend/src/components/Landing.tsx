@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 const Landing = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-[#f3f4f6] flex flex-col justify-between">
       {/* Header */}
@@ -7,7 +11,12 @@ const Landing = () => {
         <p className="text-xl mt-4">
           Your gateway to finding amazing freelance projects and talent!
         </p>
-        <button className="mt-6 px-8 py-3 bg-white text-green-600 text-lg font-semibold rounded-lg hover:bg-gray-200">
+        <button
+          onClick={() => {
+            navigate("/register");
+          }}
+          className="mt-6 px-8 py-3 bg-white text-black text-lg font-semibold rounded-lg hover:bg-gray-200"
+        >
           Get Started
         </button>
       </header>
@@ -37,11 +46,6 @@ const Landing = () => {
           </p>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="text-center py-8 bg-gray-800 text-white">
-        <p>&copy; 2025 Freelance Hub. All Rights Reserved.</p>
-      </footer>
     </div>
   );
 };

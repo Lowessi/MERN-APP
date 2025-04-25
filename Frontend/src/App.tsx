@@ -2,14 +2,21 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
-import LoginLayout from "./components/pages/LoginLayout";
-import RegisterLayout from "./components/pages/RegisterLayout";
-import LandingLayout from "./components/pages/LandingLayout";
+import LoginLayout from "./components/layouts/LoginLayout";
+import RegisterLayout from "./components/layouts/RegisterLayout";
+import LandingLayout from "./components/layouts/LandingLayout";
 import Landing from "./components/Landing";
-import ContactLayout from "./components/pages/ContactLayout";
+import ContactLayout from "./components/layouts/ContactLayout";
 import Contact from "./components/Contact";
-import AboutLayout from "./components/pages/AboutLayout";
+import AboutLayout from "./components/layouts/AboutLayout";
 import About from "./components/About";
+import HomeLayout from "./components/layouts/HomeLayout";
+import Home from "./components/homepage/Home";
+import PostLayout from "./components/layouts/PostLayout";
+import PostJob from "./components/PostJob";
+import Footer from "./components/footer/Footer";
+import ProfileLayout from "./components/layouts/ProfileLayout";
+import EditProfile from "./components/editprofile/EditProfile";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +44,21 @@ const router = createBrowserRouter([
     element: <AboutLayout />,
     children: [{ path: "", element: <About /> }],
   },
+  {
+    path: "/home",
+    element: <HomeLayout />,
+    children: [{ path: "", element: <Home /> }],
+  },
+  {
+    path: "/post-job",
+    element: <PostLayout />,
+    children: [{ path: "", element: <PostJob /> }],
+  },
+  {
+    path: "/edit-profile",
+    element: <ProfileLayout />,
+    children: [{ path: "", element: <EditProfile /> }],
+  },
 ]);
 
 function App() {
@@ -44,6 +66,7 @@ function App() {
     <>
       <ToastContainer />
       <RouterProvider router={router} />
+      <Footer />
     </>
   );
 }

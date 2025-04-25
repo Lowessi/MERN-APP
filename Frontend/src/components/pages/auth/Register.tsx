@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "../../Nav";
+import Nav from "../../navbars/Nav";
 import { toast } from "react-toastify";
 
 const Register = () => {

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "../../Nav"; // Assuming the Nav component is already styled
 import { toast } from "react-toastify";
+import { AuthContext } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -26,8 +28,26 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
+        // Save to localStorage
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+
+        // Update context
+        dispatch({
+          type: "LOGIN",
+          payload: {
+            user: data.user,
+            token: data.token,
+          },
+        });
+
         toast.success("Login successful!");
-        navigate("/L"); // Redirect to home or dashboard after successful login
+
+        if (data.user && data.user.profileCompleted) {
+          navigate("/home");
+        } else {
+          navigate("/edit-profile");
+        }
       } else {
         toast.error(data.error || "Login failed");
       }
@@ -58,7 +78,6 @@ const Login = () => {
             />
           </label>
 
-          {/* Password Input */}
           <label htmlFor="password" className="flex flex-col w-full">
             Password
             <input
@@ -71,7 +90,6 @@ const Login = () => {
             />
           </label>
 
-          {/* Redirect to Register Page */}
           <p className="text-center mt-4 text-sm text-gray-600">
             Don't have an account?{" "}
             <span
@@ -82,7 +100,6 @@ const Login = () => {
             </span>
           </p>
 
-          {/* Login Button */}
           <div className="flex gap-6 mt-4 w-full justify-center">
             <button
               type="submit"

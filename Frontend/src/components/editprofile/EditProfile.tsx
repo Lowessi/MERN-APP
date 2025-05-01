@@ -1,56 +1,102 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../context/AuthContext"; // Assuming you have this context for user data
+import { AuthContext } from "../../context/AuthContext";
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const { user, token } = useContext(AuthContext); // Assuming user and token are available in the context
+  const { user, token } = useContext(AuthContext);
 
   const [name, setName] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Fetch existing profile data if available
+  // Fetch existing profile data
   useEffect(() => {
-    if (user) {
-      setName(user.name || ""); // Fills existing data if available
-      setAddress(user.address || "");
-    }
-  }, [user]);
+    const fetchProfile = async () => {
+      if (!token) {
+        toast.error("No token found. Please log in.");
+        return;
+      }
+
+      try {
+        console.log("Fetching profile with token:", token);
+        const res = await fetch(
+          "http://localhost:5000/api/profile/getprofile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          const error = await res.json();
+          console.error("Error response from backend:", error);
+          if (error?.error === "Invalid or expired token.") {
+            toast.error("Session expired. Please log in again.");
+            navigate("/login"); // Redirect to login if token is invalid or expired
+            return;
+          }
+          throw new Error(error?.error || "Failed to fetch profile");
+        }
+
+        const data = await res.json();
+        setName(data.name || "");
+        setAddress(data.address || "");
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        toast.error("Failed to fetch profile.");
+      }
+    };
+
+    fetchProfile();
+  }, [token, navigate]); // Add `navigate` to dependency array to avoid warning
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Ensure the fields are filled out
     if (!name || !address) {
       toast.error("Please provide both name and address.");
+      return;
+    }
+
+    if (!token) {
+      toast.error("You must be logged in to edit your profile.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch("/api/editprofile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Sending token for authentication
-        },
-        body: JSON.stringify({ name, address }), // Send the updated name and address
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/profile/editprofile",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name, address }),
+        }
+      );
 
       if (response.ok) {
-        const data = await response.json(); // Parse the response as JSON
         toast.success("Profile updated successfully!");
-        navigate("/home"); // Navigate to home on successful update
+        navigate("/home");
       } else {
-        const errorMessage = await response.text(); // Get error text
-        toast.error(errorMessage || "Failed to update profile.");
+        const error = await response.json();
+        console.error("Error response from backend:", error);
+        if (error?.error === "Invalid or expired token") {
+          toast.error("Session expired. Please log in again.");
+          navigate("/login"); // Redirect to login if token is invalid or expired
+        } else {
+          toast.error(error?.error || "Failed to update profile.");
+        }
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile. Please try again.");
+      console.error("Update error:", error);
+      toast.error("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }

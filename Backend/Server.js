@@ -2,8 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const UserAuth = require("./Routes/UserAuth");
-const PostJob = require("./Routes/JobRoutes");
-const EditProfile = require("./Routes/ProfileRoutes");
+const JobRoutes = require("./Routes/JobRoutes");
 
 const app = express();
 
@@ -21,9 +20,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use("/api/jobs", JobRoutes);
 app.use("/api/userauth", UserAuth);
-app.use("/api/postjob", PostJob);
-app.use("/api/editprofile", EditProfile);
 
 // MongoDB connection
 const PORT = process.env.PORT || 5000;

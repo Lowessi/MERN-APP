@@ -1,14 +1,38 @@
+// controllers/jobController.js
 const JobModel = require("../Models/JobModel");
 
-const PostJob = async (req, res) => {
-  const { Title, Description, Budget } = req.body;
-
+// POST /api/jobs/jobpost - Post a new job
+const jobPost = async (req, res) => {
   try {
-    const Job = await JobModel.PostJob(Title, Description, Budget);
+    const { Title, Description, Requirements, Budget, Deadline } = req.body;
+    const userId = req.user._id; // Assumes requireAuth middleware sets req.user
 
-    res.status(200).json({ Title: Job.Title, Description, Budget });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const job = await JobModel.JobPost(
+      userId,
+      Title,
+      Description,
+      Requirements,
+      Budget,
+      Deadline
+    );
+
+    res.status(201).json(job);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
-module.exports = { PostJob };
+
+// GET /api/jobs - Get all jobs
+const getAllJobs = async (req, res) => {
+  try {
+    const jobs = await JobModel.getAllJobs();
+    res.status(200).json(jobs);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch jobs" });
+  }
+};
+
+module.exports = {
+  jobPost,
+  getAllJobs,
+};

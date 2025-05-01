@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
-const SECRET = process.env.SECRET;
-
 const UserSchema = new Schema(
   {
     Email: {

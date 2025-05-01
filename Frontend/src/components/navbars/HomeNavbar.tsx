@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const HomeNavbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,7 +32,9 @@ const HomeNavbar = () => {
         {/* Center: Navigation */}
         <div className="hidden sm:flex items-center gap-8 text-sm text-gray-700">
           <div className="flex flex-col items-center hover:text-black cursor-pointer">
-            <span>Home</span>
+            <Link className="p-2 rounded-[5px] hover:text-black" to="/home">
+              Home
+            </Link>
           </div>
 
           <div className="flex flex-col items-center hover:text-black cursor-pointer">

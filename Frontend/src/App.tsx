@@ -1,5 +1,11 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext"; // Import AuthContext to access user data
 import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
 import LoginLayout from "./components/layouts/LoginLayout";
@@ -15,53 +21,58 @@ import Home from "./components/homepage/Home";
 import PostLayout from "./components/layouts/PostLayout";
 import PostJob from "./components/PostJob";
 import Footer from "./components/footer/Footer";
-import ProfileLayout from "./components/layouts/ProfileLayout";
-import EditProfile from "./components/editprofile/EditProfile";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <LandingLayout />,
-    children: [{ path: "/", element: <Landing /> }],
-  },
-  {
-    path: "/login",
-    element: <LoginLayout />,
-    children: [{ path: "", element: <Login /> }],
-  },
-  {
-    path: "/register",
-    element: <RegisterLayout />,
-    children: [{ path: "", element: <Register /> }],
-  },
-  {
-    path: "/contact",
-    element: <ContactLayout />,
-    children: [{ path: "", element: <Contact /> }],
-  },
-  {
-    path: "/about",
-    element: <AboutLayout />,
-    children: [{ path: "", element: <About /> }],
-  },
-  {
-    path: "/home",
-    element: <HomeLayout />,
-    children: [{ path: "", element: <Home /> }],
-  },
-  {
-    path: "/post-job",
-    element: <PostLayout />,
-    children: [{ path: "", element: <PostJob /> }],
-  },
-  {
-    path: "/edit-profile",
-    element: <ProfileLayout />,
-    children: [{ path: "", element: <EditProfile /> }],
-  },
-]);
+const App = () => {
+  const { user } = useContext(AuthContext) || {}; // Get user from context (fallback to empty object)
 
-function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: user ? <Navigate to="/home" /> : <LandingLayout />, // Redirect logged-in users to /home
+      children: [
+        { path: "/", element: user ? <Navigate to="/home" /> : <Landing /> },
+      ],
+    },
+    {
+      path: "/login",
+      element: user ? <Navigate to="/home" /> : <LoginLayout />, // Redirect logged-in users to /home
+      children: [
+        { path: "", element: user ? <Navigate to="/home" /> : <Login /> },
+      ],
+    },
+    {
+      path: "/register",
+      element: user ? <Navigate to="/home" /> : <RegisterLayout />, // Redirect logged-in users to /home
+      children: [
+        { path: "", element: user ? <Navigate to="/home" /> : <Register /> },
+      ],
+    },
+    {
+      path: "/contact",
+      element: user ? <Navigate to="/home" /> : <ContactLayout />, // Redirect logged-in users to /home
+      children: [
+        { path: "", element: user ? <Navigate to="/home" /> : <Contact /> },
+      ],
+    },
+    {
+      path: "/about",
+      element: user ? <Navigate to="/home" /> : <AboutLayout />, // Redirect logged-in users to /home
+      children: [
+        { path: "", element: user ? <Navigate to="/home" /> : <About /> },
+      ],
+    },
+    {
+      path: "/home",
+      element: <HomeLayout />,
+      children: [{ path: "", element: <Home /> }],
+    },
+    {
+      path: "/post-job",
+      element: <PostLayout />,
+      children: [{ path: "", element: <PostJob /> }],
+    },
+  ]);
+
   return (
     <>
       <ToastContainer />
@@ -69,6 +80,6 @@ function App() {
       <Footer />
     </>
   );
-}
+};
 
 export default App;

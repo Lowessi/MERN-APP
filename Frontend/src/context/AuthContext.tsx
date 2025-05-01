@@ -1,83 +1,50 @@
-import { createContext, useReducer, ReactNode, Dispatch } from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 
-// --- Types and Interfaces ---
-
-// Your user object type (customize based on your backend response)
 interface User {
   _id: string;
-  Email: string;
-  name?: string; // <-- add this
-  address?: string; // <-- and this
+  email: string;
+  // Add other fields if needed (like name, etc.)
 }
 
-// Auth state
-interface AuthState {
+interface AuthContextType {
   user: User | null;
   token: string | null;
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
+  signOut: () => void;
 }
 
-// Auth action types
-type AuthAction =
-  | { type: "LOGIN"; payload: { user: User; token: string } }
-  | { type: "LOGOUT" };
+export const AuthContext = createContext<AuthContextType | null>(null);
 
-// Context value type
-interface AuthContextType extends AuthState {
-  dispatch: Dispatch<AuthAction>;
-}
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-// Props for AuthContextProvider
-interface AuthProviderProps {
-  children: ReactNode;
-}
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-// --- Reducer ---
+    if (storedUser && storedToken) {
+      try {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      } catch (err) {
+        console.error("Failed to parse user from localStorage");
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
+    }
+  }, []);
 
-export const AuthReducer = (
-  state: AuthState,
-  action: AuthAction
-): AuthState => {
-  switch (action.type) {
-    case "LOGIN":
-      return {
-        user: action.payload.user,
-        token: action.payload.token,
-      };
-    case "LOGOUT":
-      return {
-        user: null,
-        token: null,
-      };
-    default:
-      return state;
-  }
-};
-
-// --- Context ---
-
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  token: null,
-  dispatch: () => {},
-});
-
-// --- Context Provider ---
-
-export const AuthContextProvider = ({ children }: AuthProviderProps) => {
-  const storedUser = localStorage.getItem("user");
-  const storedToken = localStorage.getItem("token");
-
-  // Check if the stored user is a valid JSON string before parsing
-  const initialState: AuthState = {
-    user:
-      storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null,
-    token: storedToken ?? null,
+  const signOut = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
-  const [state, dispatch] = useReducer(AuthReducer, initialState);
-
   return (
-    <AuthContext.Provider value={{ ...state, dispatch }}>
+    <AuthContext.Provider value={{ user, token, setUser, setToken, signOut }}>
       {children}
     </AuthContext.Provider>
   );

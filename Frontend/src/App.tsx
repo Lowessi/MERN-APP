@@ -21,6 +21,8 @@ import Home from "./components/homepage/Home";
 import PostLayout from "./components/layouts/PostLayout";
 import PostJob from "./components/PostJob";
 import Footer from "./components/footer/Footer";
+import ProfileLayout from "./components/layouts/ProfileLayout";
+import EditProfile from "./components/editprofile/EditProfile";
 
 const App = () => {
   const { user } = useContext(AuthContext) || {}; // Get user from context (fallback to empty object)
@@ -70,6 +72,11 @@ const App = () => {
       path: "/post-job",
       element: <PostLayout />,
       children: [{ path: "", element: <PostJob /> }],
+    },
+    {
+      path: "/edit-profile",
+      element: <ProfileLayout />,
+      children: [{ path: "", element: <EditProfile /> }],
     },
   ]);
 

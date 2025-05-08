@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const UserAuth = require("./Routes/UserAuth");
 const JobRoutes = require("./Routes/JobRoutes");
+const ProfileRoutes = require("./Routes/ProfileRoutes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/jobs", JobRoutes);
 app.use("/api/userauth", UserAuth);
+app.use("/api/profile", ProfileRoutes);
 
 // MongoDB connection
 const PORT = process.env.PORT || 5000;

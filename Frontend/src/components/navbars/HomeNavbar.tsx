@@ -18,15 +18,6 @@ const HomeNavbar = () => {
           <div className="text-green-700 text-2xl font-bold"> Pablo Jobb</div>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="hidden md:flex">
-            <input
-              type="text"
-              placeholder="Search"
-              className="px-3 py-1 border rounded-md w-64"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </form>
         </div>
 
         {/* Center: Navigation */}
@@ -38,7 +29,7 @@ const HomeNavbar = () => {
           </div>
 
           <div className="flex flex-col items-center hover:text-black cursor-pointer">
-            <span>Jobs</span>
+            <span>Freelancer</span>
           </div>
           <div className="flex flex-col items-center hover:text-black cursor-pointer">
             <span>Messaging</span>

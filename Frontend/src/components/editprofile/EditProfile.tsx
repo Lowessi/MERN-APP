@@ -1,154 +1,224 @@
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
+type ExperienceItem = {
+  company: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+};
+
+type ProfileData = {
+  name: string;
+  location: string;
+  title: string;
+  skills: string;
+  experience: ExperienceItem[];
+};
+
 const EditProfile = () => {
-  const navigate = useNavigate();
-  const { user, token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext) || {};
+  const [formData, setFormData] = useState<ProfileData>({
+    name: "",
+    location: "",
+    title: "",
+    skills: "",
+    experience: [
+      { company: "", title: "", startDate: "", endDate: "", description: "" },
+    ],
+  });
 
-  const [name, setName] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // Fetch existing profile data
+  // Fetch existing profile if any
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!token) {
-        toast.error("No token found. Please log in.");
-        return;
-      }
-
       try {
-        console.log("Fetching profile with token:", token);
-        const res = await fetch(
-          "http://localhost:5000/api/profile/getprofile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          const error = await res.json();
-          console.error("Error response from backend:", error);
-          if (error?.error === "Invalid or expired token.") {
-            toast.error("Session expired. Please log in again.");
-            navigate("/login"); // Redirect to login if token is invalid or expired
-            return;
-          }
-          throw new Error(error?.error || "Failed to fetch profile");
-        }
-
-        const data = await res.json();
-        setName(data.name || "");
-        setAddress(data.address || "");
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        toast.error("Failed to fetch profile.");
-      }
-    };
-
-    fetchProfile();
-  }, [token, navigate]); // Add `navigate` to dependency array to avoid warning
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!name || !address) {
-      toast.error("Please provide both name and address.");
-      return;
-    }
-
-    if (!token) {
-      toast.error("You must be logged in to edit your profile.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/profile/editprofile",
-        {
-          method: "PUT",
+        const res = await fetch("http://localhost:5000/api/profile", {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ name, address }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setFormData({
+            name: data.name || "",
+            location: data.location || "",
+            title: data.title || "",
+            skills: (data.skills || []).join(", "),
+            experience: data.experience?.length
+              ? data.experience
+              : [
+                  {
+                    company: "",
+                    title: "",
+                    startDate: "",
+                    endDate: "",
+                    description: "",
+                  },
+                ],
+          });
         }
-      );
-
-      if (response.ok) {
-        toast.success("Profile updated successfully!");
-        navigate("/home");
-      } else {
-        const error = await response.json();
-        console.error("Error response from backend:", error);
-        if (error?.error === "Invalid or expired token") {
-          toast.error("Session expired. Please log in again.");
-          navigate("/login"); // Redirect to login if token is invalid or expired
-        } else {
-          toast.error(error?.error || "Failed to update profile.");
-        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
       }
-    } catch (error) {
-      console.error("Update error:", error);
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+    };
+    if (token) fetchProfile();
+  }, [token]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index?: number
+  ) => {
+    const { name, value } = e.target;
+    if (typeof index === "number") {
+      const updatedExperience = [...formData.experience];
+      updatedExperience[index][name as keyof ExperienceItem] = value;
+      setFormData({ ...formData, experience: updatedExperience });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const addExperience = () => {
+    setFormData((prev) => ({
+      ...prev,
+      experience: [
+        ...prev.experience,
+        { company: "", title: "", startDate: "", endDate: "", description: "" },
+      ],
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      ...formData,
+      skills: formData.skills.split(",").map((s) => s.trim()),
+    };
+
+    try {
+      const res = await fetch("http://localhost:5000/api/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Profile saved successfully.");
+      } else {
+        alert("Failed to save profile: " + data.error);
+      }
+    } catch (err) {
+      console.error("Failed to submit profile:", err);
     }
   };
 
   return (
-    <div className="bg-[#f3f4f6] min-h-screen">
-      <div className="flex justify-center items-center mt-10">
-        <form
-          onSubmit={handleSubmit}
-          className="shadow-md flex flex-col gap-5 items-center p-8 rounded-lg bg-white w-full max-w-md"
-        >
-          <h1 className="text-3xl font-semibold text-green-600">
-            Edit Profile
-          </h1>
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6">
+      <h2 className="text-xl font-bold">Edit Profile</h2>
 
-          <label htmlFor="name" className="flex flex-col w-full">
-            Name
-            <input
-              id="name"
-              className="border h-12 p-3 rounded-lg w-full mt-2 border-gray-300 focus:ring-2 focus:ring-green-500"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </label>
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+        placeholder="Full Name"
+        className="w-full border p-2 rounded"
+        required
+      />
+      <input
+        type="text"
+        name="location"
+        value={formData.location}
+        onChange={handleChange}
+        placeholder="Location"
+        className="w-full border p-2 rounded"
+        required
+      />
+      <input
+        type="text"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        placeholder="Professional Title"
+        className="w-full border p-2 rounded"
+        required
+      />
+      <input
+        type="text"
+        name="skills"
+        value={formData.skills}
+        onChange={handleChange}
+        placeholder="Skills (comma separated)"
+        className="w-full border p-2 rounded"
+      />
 
-          <label htmlFor="address" className="flex flex-col w-full">
-            Address
-            <input
-              id="address"
-              className="border h-12 p-3 rounded-lg w-full mt-2 border-gray-300 focus:ring-2 focus:ring-green-500"
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-          </label>
+      <h3 className="text-lg font-semibold">Experience</h3>
+      {formData.experience.map((exp, i) => (
+        <div key={i} className="space-y-2 border p-4 rounded">
+          <input
+            type="text"
+            name="company"
+            value={exp.company}
+            onChange={(e) => handleChange(e, i)}
+            placeholder="Company"
+            className="w-full border p-2 rounded"
+          />
+          <input
+            type="text"
+            name="title"
+            value={exp.title}
+            onChange={(e) => handleChange(e, i)}
+            placeholder="Job Title"
+            className="w-full border p-2 rounded"
+          />
+          <input
+            type="text"
+            name="startDate"
+            value={exp.startDate}
+            onChange={(e) => handleChange(e, i)}
+            placeholder="Start Date"
+            className="w-full border p-2 rounded"
+          />
+          <input
+            type="text"
+            name="endDate"
+            value={exp.endDate}
+            onChange={(e) => handleChange(e, i)}
+            placeholder="End Date"
+            className="w-full border p-2 rounded"
+          />
+          <textarea
+            name="description"
+            value={exp.description}
+            onChange={(e) => handleChange(e, i)}
+            placeholder="Description"
+            className="w-full border p-2 rounded"
+          />
+        </div>
+      ))}
 
-          <div className="flex gap-6 mt-4 w-full justify-center">
-            <button
-              type="submit"
-              className="w-full md:w-md p-3 rounded-lg bg-green-600 text-white shadow-md hover:bg-green-700 transition"
-              disabled={loading}
-            >
-              {loading ? "Updating..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      <button
+        type="button"
+        onClick={addExperience}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Add Experience
+      </button>
+
+      <button
+        type="submit"
+        className="bg-green-600 text-white px-6 py-2 rounded"
+      >
+        Save Profile
+      </button>
+    </form>
   );
 };
 

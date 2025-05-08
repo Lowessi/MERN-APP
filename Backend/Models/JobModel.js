@@ -5,7 +5,7 @@ const JobSchema = new Schema(
   {
     UserId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserModel", // This references the User model
+      ref: "UserModel",
       required: true,
     },
     Title: {
@@ -15,11 +15,11 @@ const JobSchema = new Schema(
     Description: {
       type: String,
       required: true,
-      maxlength: 2000, // Optional: Add character limit for description
+      maxlength: 2000,
     },
     Requirements: {
       type: String,
-      maxlength: 1000, // Optional: Limit for requirements
+      maxlength: 1000,
     },
     Budget: {
       type: Number,
@@ -33,6 +33,7 @@ const JobSchema = new Schema(
   { timestamps: true }
 );
 
+// Static method to post a new job
 JobSchema.statics.JobPost = async function (
   userId,
   title,
@@ -42,7 +43,7 @@ JobSchema.statics.JobPost = async function (
   deadline
 ) {
   const job = new this({
-    UserId: userId, // Make sure this is the correct field to store the user ID
+    UserId: userId,
     Title: title,
     Description: description,
     Requirements: requirements,
@@ -51,10 +52,23 @@ JobSchema.statics.JobPost = async function (
   });
 
   await job.save();
-  return job; // Return the job object after saving
+  return job;
 };
+
+// Static method to get all jobs (newest first)
 JobSchema.statics.getAllJobs = async function () {
   return this.find().sort({ createdAt: -1 });
+};
+
+// Static method to search jobs by query
+JobSchema.statics.searchJobs = async function (query) {
+  return this.find({
+    $or: [
+      { Title: { $regex: query, $options: "i" } },
+      { Description: { $regex: query, $options: "i" } },
+      { Requirements: { $regex: query, $options: "i" } },
+    ],
+  }).sort({ createdAt: -1 });
 };
 
 module.exports = mongoose.model("JobModel", JobSchema);

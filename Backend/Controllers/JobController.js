@@ -1,4 +1,3 @@
-// controllers/jobController.js
 const JobModel = require("../Models/JobModel");
 
 // POST /api/jobs/jobpost - Post a new job
@@ -32,7 +31,24 @@ const getAllJobs = async (req, res) => {
   }
 };
 
+// GET /api/jobs/search?query=... - Search jobs by keyword
+const searchJobs = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query || query.trim() === "") {
+      return res.status(400).json({ error: "Search query is required" });
+    }
+
+    const jobs = await JobModel.searchJobs(query);
+    res.status(200).json(jobs);
+  } catch (err) {
+    res.status(500).json({ error: "Search failed" });
+  }
+};
+
 module.exports = {
   jobPost,
   getAllJobs,
+  searchJobs,
 };

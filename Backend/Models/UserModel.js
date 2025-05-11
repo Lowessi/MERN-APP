@@ -50,4 +50,10 @@ UserSchema.statics.SigninUser = async function (Email, Password) {
   return User;
 };
 
+UserSchema.statics.searchUsers = async function (query) {
+  return this.find({
+    Email: { $regex: query, $options: "i" }, // or add more fields like name
+  }).select("-Password"); // exclude password
+};
+
 module.exports = mongoose.model("UserModel", UserSchema);

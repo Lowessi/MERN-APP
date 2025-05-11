@@ -23,6 +23,10 @@ import PostJob from "./components/PostJob";
 import Footer from "./components/footer/Footer";
 import ProfileLayout from "./components/layouts/ProfileLayout";
 import EditProfile from "./components/editprofile/EditProfile";
+import FreelanceLayout from "./components/layouts/FreelanceLayout";
+import Freelance from "./components/freelancer/Freelance";
+import FreelanceProfileLayout from "./components/layouts/FreelanceProfileLayout";
+import FreelancerProfile from "./components/freelancer/FreelancerProfile";
 
 const App = () => {
   const { user } = useContext(AuthContext) || {}; // Get user from context (fallback to empty object)
@@ -77,6 +81,16 @@ const App = () => {
       path: "/edit-profile",
       element: <ProfileLayout />,
       children: [{ path: "", element: <EditProfile /> }],
+    },
+    {
+      path: "/freelancer",
+      element: <FreelanceLayout />,
+      children: [{ path: "", element: <Freelance /> }],
+    },
+    {
+      path: "/freelancer/:id",
+      element: <FreelanceProfileLayout />,
+      children: [{ path: "", element: <FreelancerProfile /> }], // Adjust this component to display freelancer profile
     },
   ]);
 

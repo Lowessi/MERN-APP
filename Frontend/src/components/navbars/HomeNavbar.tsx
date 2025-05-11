@@ -27,10 +27,15 @@ const HomeNavbar = () => {
               Home
             </Link>
           </div>
-
           <div className="flex flex-col items-center hover:text-black cursor-pointer">
-            <span>Freelancer</span>
+            <Link
+              className="p-2 rounded-[5px] hover:text-black"
+              to="/freelancer"
+            >
+              Freelancer
+            </Link>
           </div>
+
           <div className="flex flex-col items-center hover:text-black cursor-pointer">
             <span>Messaging</span>
           </div>

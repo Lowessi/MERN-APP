@@ -1,33 +1,19 @@
 const ProfileModel = require("../Models/ProfileModel");
 
-// Create profile
-const createProfile = async (req, res) => {
-  const userId = req.user._id; // Assumes authentication middleware adds user
+// Create or update profile
+const upsertProfile = async (req, res) => {
+  const userId = req.user._id;
   const { name, location, title, skills, workExperience } = req.body;
 
   try {
-    const profile = await ProfileModel.CreateProfile(userId, {
+    const profile = await ProfileModel.UpsertProfile(userId, {
       name,
       location,
       title,
       skills,
       workExperience,
     });
-
-    res.status(201).json({ message: "Profile created successfully", profile });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-// Edit profile
-const editProfile = async (req, res) => {
-  const userId = req.user._id;
-  const updates = req.body;
-
-  try {
-    const profile = await ProfileModel.EditProfile(userId, updates);
-    res.status(200).json({ message: "Profile updated successfully", profile });
+    res.status(200).json({ message: "Profile saved successfully", profile });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -47,4 +33,4 @@ const getMyProfile = async (req, res) => {
   }
 };
 
-module.exports = { createProfile, editProfile, getMyProfile };
+module.exports = { upsertProfile, getMyProfile };

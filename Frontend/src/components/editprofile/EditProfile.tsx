@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 type ExperienceItem = {
   company: string;
-  title: string;
+  jobTitle: string;
   startDate: string;
   endDate: string;
   description: string;
@@ -13,8 +13,8 @@ type ProfileData = {
   name: string;
   location: string;
   title: string;
-  skills: string;
-  experience: ExperienceItem[];
+  skills: string; // comma-separated for input
+  workExperience: ExperienceItem[];
 };
 
 const EditProfile = () => {
@@ -24,12 +24,18 @@ const EditProfile = () => {
     location: "",
     title: "",
     skills: "",
-    experience: [
-      { company: "", title: "", startDate: "", endDate: "", description: "" },
+    workExperience: [
+      {
+        company: "",
+        jobTitle: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      },
     ],
   });
 
-  // Fetch existing profile if any
+  // Fetch existing profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -45,12 +51,12 @@ const EditProfile = () => {
             location: data.location || "",
             title: data.title || "",
             skills: (data.skills || []).join(", "),
-            experience: data.experience?.length
-              ? data.experience
+            workExperience: data.workExperience?.length
+              ? data.workExperience
               : [
                   {
                     company: "",
-                    title: "",
+                    jobTitle: "",
                     startDate: "",
                     endDate: "",
                     description: "",
@@ -71,9 +77,9 @@ const EditProfile = () => {
   ) => {
     const { name, value } = e.target;
     if (typeof index === "number") {
-      const updatedExperience = [...formData.experience];
-      updatedExperience[index][name as keyof ExperienceItem] = value;
-      setFormData({ ...formData, experience: updatedExperience });
+      const updatedExp = [...formData.workExperience];
+      updatedExp[index][name as keyof ExperienceItem] = value;
+      setFormData({ ...formData, workExperience: updatedExp });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -82,9 +88,15 @@ const EditProfile = () => {
   const addExperience = () => {
     setFormData((prev) => ({
       ...prev,
-      experience: [
-        ...prev.experience,
-        { company: "", title: "", startDate: "", endDate: "", description: "" },
+      workExperience: [
+        ...prev.workExperience,
+        {
+          company: "",
+          jobTitle: "",
+          startDate: "",
+          endDate: "",
+          description: "",
+        },
       ],
     }));
   };
@@ -160,7 +172,7 @@ const EditProfile = () => {
       />
 
       <h3 className="text-lg font-semibold">Experience</h3>
-      {formData.experience.map((exp, i) => (
+      {formData.workExperience.map((exp, i) => (
         <div key={i} className="space-y-2 border p-4 rounded">
           <input
             type="text"
@@ -172,8 +184,8 @@ const EditProfile = () => {
           />
           <input
             type="text"
-            name="title"
-            value={exp.title}
+            name="jobTitle"
+            value={exp.jobTitle}
             onChange={(e) => handleChange(e, i)}
             placeholder="Job Title"
             className="w-full border p-2 rounded"

@@ -22,25 +22,13 @@ const ProfileSchema = new mongoose.Schema({
   workExperience: { type: [WorkExperienceSchema], default: [] },
 });
 
-// Static method to create profile
-ProfileSchema.statics.CreateProfile = async function (userId, data) {
-  const existing = await this.findOne({ userId });
-  if (existing) {
-    throw new Error("Profile already exists.");
-  }
-  const profile = await this.create({ userId, ...data });
-  return profile;
-};
-
-// Static method to edit profile
-ProfileSchema.statics.EditProfile = async function (userId, data) {
-  const updated = await this.findOneAndUpdate({ userId }, data, {
-    new: true,
-    runValidators: true,
-  });
-  if (!updated) {
-    throw new Error("Profile not found.");
-  }
+// Static method to create or update profile
+ProfileSchema.statics.UpsertProfile = async function (userId, data) {
+  const updated = await this.findOneAndUpdate(
+    { userId },
+    { userId, ...data },
+    { upsert: true, new: true, runValidators: true }
+  );
   return updated;
 };
 

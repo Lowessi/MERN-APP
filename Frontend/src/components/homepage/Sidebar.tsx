@@ -52,7 +52,8 @@ const Sidebar = () => {
       <aside className="w-60 h-100 p-4 bg-white shadow-sm border border-gray-300 rounded-[15px]">
         <div className="bg-green-100 rounded-lg p-4 mb-4 text-center">
           <div className="text-4xl font-bold text-green-600">W</div>
-          <p className="mt-2 font-semibold">{profile?.name || user.email}</p>
+          <p className="mt-2 font-semibold">{profile?.name}</p>
+          <p className="text-sm text-gray-500">{user.email}</p>
           <p className="text-sm text-gray-500">{profile?.title || "—"}</p>
           <p className="text-xs text-gray-400">{profile?.location || "—"}</p>
         </div>

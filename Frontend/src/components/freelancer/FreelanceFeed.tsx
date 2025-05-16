@@ -32,6 +32,7 @@ const FreelancerFeed = () => {
       if (!res.ok) throw new Error("Failed to fetch freelancers");
 
       const data: User[] = await res.json();
+      console.log(data);
       setFreelancers(data);
     } catch (error) {
       console.error("Error fetching freelancers:", error);
@@ -64,7 +65,7 @@ const FreelancerFeed = () => {
             freelancers.map((user) => (
               <div
                 key={user._id}
-                onClick={() => navigate(`/freelancer/${user._id}`)} // Navigate to profile preview on click
+                onClick={() => navigate(`/profile-preview/${user._id}`)} // Navigate to profile preview on click
                 className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border cursor-pointer hover:shadow-md transition"
               >
                 <h3 className="text-blue-700 font-medium">
@@ -72,7 +73,10 @@ const FreelancerFeed = () => {
                 </h3>
                 <p className="text-sm text-gray-700">{user.Email}</p>
                 <p className="text-xs text-gray-500">
-                  {user.address || "No address provided"}
+                  {user.location || "No address provided"}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {user.title || "No title provided"}
                 </p>
               </div>
             ))

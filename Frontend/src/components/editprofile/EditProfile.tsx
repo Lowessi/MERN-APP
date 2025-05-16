@@ -13,7 +13,7 @@ type ProfileData = {
   name: string;
   location: string;
   title: string;
-  skills: string; // comma-separated for input
+  skills: string; // comma-separated
   workExperience: ExperienceItem[];
 };
 
@@ -35,11 +35,13 @@ const EditProfile = () => {
     ],
   });
 
+  const [loading, setLoading] = useState(true);
+
   // Fetch existing profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/profile", {
+        const res = await fetch("http://localhost:5000/api/profile/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -66,6 +68,8 @@ const EditProfile = () => {
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
+      } finally {
+        setLoading(false);
       }
     };
     if (token) fetchProfile();
@@ -110,7 +114,7 @@ const EditProfile = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/profile", {
+      const res = await fetch("http://localhost:5000/api/profile/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -130,6 +134,9 @@ const EditProfile = () => {
       console.error("Failed to submit profile:", err);
     }
   };
+
+  if (loading)
+    return <div className="text-center p-10">Loading profile...</div>;
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6">

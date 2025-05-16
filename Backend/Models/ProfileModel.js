@@ -8,28 +8,33 @@ const WorkExperienceSchema = new mongoose.Schema({
   description: { type: String },
 });
 
-const ProfileSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserModel",
-    required: true,
-    unique: true,
+const ProfileSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserModel",
+      required: true,
+      unique: true,
+    },
+    name: { type: String, required: true },
+    location: { type: String, required: true },
+    title: { type: String, required: true },
+    skills: { type: [String], required: true },
+    workExperience: { type: [WorkExperienceSchema], default: [] },
   },
-  name: { type: String, required: true },
-  location: { type: String, required: true },
-  title: { type: String, required: true },
-  skills: { type: [String], required: true },
-  workExperience: { type: [WorkExperienceSchema], default: [] },
-});
+  { timestamps: true }
+);
 
 // Static method to create or update profile
 ProfileSchema.statics.UpsertProfile = async function (userId, data) {
   const updated = await this.findOneAndUpdate(
     { userId },
-    { userId, ...data },
+    { $set: data },
     { upsert: true, new: true, runValidators: true }
   );
   return updated;
 };
 
-module.exports = mongoose.model("ProfileModel", ProfileSchema);
+// Use mongoose.models to avoid re-compiling the model
+module.exports =
+  mongoose.models.ProfileModel || mongoose.model("ProfileModel", ProfileSchema);

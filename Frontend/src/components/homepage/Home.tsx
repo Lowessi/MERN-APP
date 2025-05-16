@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext"; // Adjust the path as needed
 import JobFeed from "./JobFeed";
 import Sidebar from "./Sidebar";
+import Messaging from "./Messaging";
 
 const Home = () => {
   const { user } = useContext(AuthContext) || {}; // Get user from context (fallback to empty object)
@@ -25,6 +26,7 @@ const Home = () => {
       <div className="flex px-30">
         <Sidebar />
         <JobFeed />
+        <Messaging />
       </div>
     </div>
   );

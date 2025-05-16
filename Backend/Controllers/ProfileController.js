@@ -1,4 +1,4 @@
-const ProfileModel = require("../Models/ProfileModel");
+const ProfileModel = require("../models/ProfileModel");
 
 // Create or update profile
 const upsertProfile = async (req, res) => {
@@ -19,18 +19,50 @@ const upsertProfile = async (req, res) => {
   }
 };
 
-// Get profile
+// Get your own profile
 const getMyProfile = async (req, res) => {
   const userId = req.user._id;
   try {
-    const profile = await ProfileModel.findOne({ userId });
+    const profile = await ProfileModel.findOne({ userId })
+      .populate("userId", "Email") // Ensure correct field name here
+      .lean();
+
     if (!profile) {
       return res.status(404).json({ error: "Profile not found" });
     }
-    res.status(200).json(profile);
+
+    // Attach the email to the profile data
+    res.status(200).json({
+      ...profile, // Return the populated profile data
+      email: profile.userId?.Email || "No email provided", // Check if Email is populated correctly
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
 
-module.exports = { upsertProfile, getMyProfile };
+// Get another user's profile by ID (for public display)
+const getProfileById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Populate the user's email for the public profile
+    const profile = await ProfileModel.findOne({ userId: id })
+      .populate("userId", "Email") // Populate the Email field
+      .lean();
+
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    res.status(200).json(profile);
+  } catch (error) {
+    console.error("Error fetching profile:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = {
+  upsertProfile,
+  getMyProfile,
+  getProfileById,
+};

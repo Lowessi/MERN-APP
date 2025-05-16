@@ -2,13 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const HomeNavbar = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Search:", searchTerm);
-  };
-
   return (
     <div className="sticky top-0 z-50">
       <nav className="bg-white shadow-sm px-4 py-2 flex items-center justify-between ">
@@ -36,9 +29,6 @@ const HomeNavbar = () => {
             </Link>
           </div>
 
-          <div className="flex flex-col items-center hover:text-black cursor-pointer">
-            <span>Messaging</span>
-          </div>
           <div className="flex flex-col items-center hover:text-black cursor-pointer">
             <span>Notifications</span>
           </div>

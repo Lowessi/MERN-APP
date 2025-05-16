@@ -2,13 +2,15 @@ export interface User {
   _id: string;
   Email: string;
   name?: string;
-  address?: string;
-  // Add optional fields if your ProfileModel includes more
+  location?: string;
+  title?: string;
   skills?: string[];
-  experience?: {
+  workExperience?: {
     company: string;
+    jobTitle: string;
     role: string;
     duration: string;
+    description: string;
   }[];
   createdAt?: string;
   updatedAt?: string;

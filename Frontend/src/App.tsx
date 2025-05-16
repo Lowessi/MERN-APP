@@ -34,43 +34,38 @@ const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: user ? <Navigate to="/home" /> : <LandingLayout />, // Redirect logged-in users to /home
-      children: [
-        { path: "/", element: user ? <Navigate to="/home" /> : <Landing /> },
-      ],
+      element: <LandingLayout />, // Redirect logged-in users to /home
+      children: [{ path: "/", element: <Landing /> }],
     },
     {
       path: "/login",
-      element: user ? <Navigate to="/home" /> : <LoginLayout />, // Redirect logged-in users to /home
-      children: [
-        { path: "", element: user ? <Navigate to="/home" /> : <Login /> },
-      ],
+      element: <LoginLayout />, // Redirect logged-in users to /home
+      children: [{ path: "", element: <Login /> }],
     },
     {
       path: "/register",
-      element: user ? <Navigate to="/home" /> : <RegisterLayout />, // Redirect logged-in users to /home
-      children: [
-        { path: "", element: user ? <Navigate to="/home" /> : <Register /> },
-      ],
+      element: <RegisterLayout />, // Redirect logged-in users to /home
+      children: [{ path: "", element: <Register /> }],
     },
     {
       path: "/contact",
-      element: user ? <Navigate to="/home" /> : <ContactLayout />, // Redirect logged-in users to /home
-      children: [
-        { path: "", element: user ? <Navigate to="/home" /> : <Contact /> },
-      ],
+      element: <ContactLayout />, // Redirect logged-in users to /home
+      children: [{ path: "", element: <Contact /> }],
     },
     {
       path: "/about",
-      element: user ? <Navigate to="/home" /> : <AboutLayout />, // Redirect logged-in users to /home
-      children: [
-        { path: "", element: user ? <Navigate to="/home" /> : <About /> },
-      ],
+      element: <AboutLayout />, // Redirect logged-in users to /home
+      children: [{ path: "", element: <About /> }],
     },
     {
       path: "/home",
       element: <HomeLayout />,
       children: [{ path: "", element: <Home /> }],
+    },
+    {
+      path: "/edit-profile",
+      element: <ProfileLayout />,
+      children: [{ path: "", element: <EditProfile /> }],
     },
     {
       path: "/post-job",

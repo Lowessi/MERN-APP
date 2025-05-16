@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const SECRET = process.env.SECRET;
 const bcrypt = require("bcrypt");
 const ProfileModel = require("../Models/ProfileModel");
+const { get } = require("mongoose");
 
 // helper to create a JWT
 const createToken = (_id) => {
@@ -88,4 +89,24 @@ const searchUsers = async (req, res) => {
     res.status(500).json({ error: "Search failed" });
   }
 };
-module.exports = { SignupUser, SigninUser, searchUsers };
+
+const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Populate the user's email for the public profile
+    const user = await UserModel.findOne({ _id: id });
+    // .populate("_id", "Email") // Populate the Email field
+    // .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { SignupUser, SigninUser, searchUsers, getUserById };

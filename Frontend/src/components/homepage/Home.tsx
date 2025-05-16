@@ -4,16 +4,33 @@ import { AuthContext } from "../../context/AuthContext"; // Adjust the path as n
 import JobFeed from "./JobFeed";
 import Sidebar from "./Sidebar";
 import Messaging from "./Messaging";
+import { getProfile } from "../../api/Profile";
 
 const Home = () => {
-  const { user } = useContext(AuthContext) || {}; // Get user from context (fallback to empty object)
+  const { token, user } = useContext(AuthContext) || {}; // ✅ grab user from AuthContext
   const navigate = useNavigate();
+
+  const fetchProfile = async (userId: string, token: string) => {
+    try {
+      const profile = await getProfile(userId, token);
+      console.log("Fetched profile:", profile);
+    } catch (error: any) {
+      console.error("Error fetching profile in Home.tsx:", error.message);
+      navigate("/edit-profile"); // Redirect to edit profile page
+      // Show UI error, redirect, etc.
+    }
+  };
 
   useEffect(() => {
     // If there is no user, redirect to login page
-    if (!user) {
+    if (!user || !token) {
       navigate("/login"); // Or you can redirect to /signin or whatever page you want
+      return;
     }
+
+    // fetchProfile(user.id, token);
+
+    // console.log(profile);
   }, [user, navigate]); // Run effect when user changes
 
   if (!user) {

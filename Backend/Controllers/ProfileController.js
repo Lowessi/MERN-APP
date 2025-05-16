@@ -1,4 +1,5 @@
-const ProfileModel = require("../models/ProfileModel");
+const ProfileModel = require("../Models/ProfileModel");
+// import ProfileModel from "../Models/ProfileModel";
 
 // Create or update profile
 const upsertProfile = async (req, res) => {

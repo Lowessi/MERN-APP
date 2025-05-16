@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../context/AuthContext";
+import { getProfile } from "../../../api/Profile";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,8 +11,24 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const fetchProfile = async (data: any) => {
+    try {
+      const profile = await getProfile(data.user.id, data.token);
+      console.log("Fetched profile:", profile);
+      // navigate("/home");
+    } catch (error: any) {
+      console.error("Error fetching profile in Home.tsx:", error.message);
+      // Show UI error, redirect, etc.
+    }
+
+    navigate("/edit-profile"); // Redirect to edit profile page
+    // console.log("FUCK");
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    console.log("submit");
 
     if (!setUser || !setToken) {
       console.error("AuthContext is not available.");
@@ -41,11 +58,10 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
 
-      setUser(data.user);
-      setToken(data.token);
+      fetchProfile(data);
 
       toast.success("Login successful!");
-      navigate("/home");
+      // navigate("/home");
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Something went wrong. Please try again.");
@@ -100,7 +116,7 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full p-3 rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
+          className="w-full p-3 rounded-lg bg-orange-600 text-white hover:bg-green-700 transition"
         >
           Sign In
         </button>

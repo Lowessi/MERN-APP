@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { AuthContext } from "../../context/AuthContext";
+import { getProfile } from "../../api/Profile";
 import { getUser } from "../../api/User";
 
 const ProfilePreview = () => {
@@ -16,7 +17,12 @@ const ProfilePreview = () => {
 
     if (!params.id || !token) return;
 
-    const loggedIn = await getUser(params.id, token);
+    const loggedIn = await getProfile(params.id, token);
+
+    if (loggedIn) {
+      const user = getUser(loggedIn.userId._id);
+      console.log(user);
+    }
     console.log(loggedIn, params.id);
   };
 

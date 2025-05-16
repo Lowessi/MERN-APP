@@ -1,11 +1,12 @@
-const getUser = async (userId: string, token: string) => {
-  console.log(userId, token);
+const URL = "http://localhost:5000/api/userauth"
+
+const getUser = async (userId: string) => {
+  console.log(userId);
 
   try {
-    const response = await fetch(`${URL}/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(`${URL}/${userId}`);
     const user = await response.json();
+
     console.log(user);
     return user;
   } catch (err) {

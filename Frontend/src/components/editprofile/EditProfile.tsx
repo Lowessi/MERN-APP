@@ -1,5 +1,7 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, use } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { getProfile } from "../../api/Profile";
+import { getUser } from "../../api/User";
 
 type ExperienceItem = {
   company: string;
@@ -18,7 +20,16 @@ type ProfileData = {
 };
 
 const EditProfile = () => {
-  const { token } = useContext(AuthContext) || {};
+  const [hasProfile, setHasProfile] = useState<boolean>(false);
+  const { token, user, loading } = useContext(AuthContext) || {};
+
+  useEffect(() => {
+    if (!loading && token && user) {
+      fetchProfile();
+    }
+  }, [loading, token, user]);
+
+  // const { token } = useContext(AuthContext) || {};
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
     location: "",
@@ -35,44 +46,32 @@ const EditProfile = () => {
     ],
   });
 
-  const [loading, setLoading] = useState(true);
+  const fetchProfile = async () => {
+    if (!token || !user) {
+      console.error("Ambot nimo");
+      return;
+    }
+
+    console.log(user.id, token);
+
+    try {
+      const profile = await getProfile(user.id, token);
+      setHasProfile(true);
+      console.log("Fetched profile:", profile);
+    } catch (error: any) {
+      setHasProfile(false);
+      console.error("Error fetching profile in Home.tsx:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    console.log(hasProfile);
+  }, [hasProfile]);
 
   // Fetch existing profile
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/profile/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setFormData({
-            name: data.name || "",
-            location: data.location || "",
-            title: data.title || "",
-            skills: (data.skills || []).join(", "),
-            workExperience: data.workExperience?.length
-              ? data.workExperience
-              : [
-                  {
-                    company: "",
-                    jobTitle: "",
-                    startDate: "",
-                    endDate: "",
-                    description: "",
-                  },
-                ],
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (token) fetchProfile();
+    fetchProfile();
+    console.log(token);
   }, [token]);
 
   const handleChange = (
@@ -108,6 +107,8 @@ const EditProfile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(token);
+
     const payload = {
       ...formData,
       skills: formData.skills.split(",").map((s) => s.trim()),
@@ -125,8 +126,10 @@ const EditProfile = () => {
 
       const data = await res.json();
 
+      console.log(data);
+
       if (res.ok) {
-        alert("Profile saved successfully.");
+        setHasProfile(true);
       } else {
         alert("Failed to save profile: " + data.error);
       }
@@ -135,109 +138,116 @@ const EditProfile = () => {
     }
   };
 
-  if (loading)
-    return <div className="text-center p-10">Loading profile...</div>;
-
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-6">
-      <h2 className="text-xl font-bold">Edit Profile</h2>
+    <div className={`${loading ? "hidden" : "block"}`}>
+      <div className={`${hasProfile ? "block" : "hidden"} text-center p-10`}>
+        Has Profile
+      </div>
+      <div className={`${!hasProfile ? "block" : "hidden"} text-center p-10`}>
+        <form
+          onSubmit={handleSubmit}
+          className="max-w-2xl mx-auto p-6 space-y-6"
+        >
+          <h2 className="text-xl font-bold">Edit Profile</h2>
 
-      <input
-        type="text"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        placeholder="Full Name"
-        className="w-full border p-2 rounded"
-        required
-      />
-      <input
-        type="text"
-        name="location"
-        value={formData.location}
-        onChange={handleChange}
-        placeholder="Location"
-        className="w-full border p-2 rounded"
-        required
-      />
-      <input
-        type="text"
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        placeholder="Professional Title"
-        className="w-full border p-2 rounded"
-        required
-      />
-      <input
-        type="text"
-        name="skills"
-        value={formData.skills}
-        onChange={handleChange}
-        placeholder="Skills (comma separated)"
-        className="w-full border p-2 rounded"
-      />
-
-      <h3 className="text-lg font-semibold">Experience</h3>
-      {formData.workExperience.map((exp, i) => (
-        <div key={i} className="space-y-2 border p-4 rounded">
           <input
             type="text"
-            name="company"
-            value={exp.company}
-            onChange={(e) => handleChange(e, i)}
-            placeholder="Company"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Full Name"
             className="w-full border p-2 rounded"
+            required
           />
           <input
             type="text"
-            name="jobTitle"
-            value={exp.jobTitle}
-            onChange={(e) => handleChange(e, i)}
-            placeholder="Job Title"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            placeholder="Location"
             className="w-full border p-2 rounded"
+            required
           />
           <input
             type="text"
-            name="startDate"
-            value={exp.startDate}
-            onChange={(e) => handleChange(e, i)}
-            placeholder="Start Date"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Professional Title"
             className="w-full border p-2 rounded"
+            required
           />
           <input
             type="text"
-            name="endDate"
-            value={exp.endDate}
-            onChange={(e) => handleChange(e, i)}
-            placeholder="End Date"
+            name="skills"
+            value={formData.skills}
+            onChange={handleChange}
+            placeholder="Skills (comma separated)"
             className="w-full border p-2 rounded"
           />
-          <textarea
-            name="description"
-            value={exp.description}
-            onChange={(e) => handleChange(e, i)}
-            placeholder="Description"
-            className="w-full border p-2 rounded"
-          />
-        </div>
-      ))}
 
-      <button
-        type="button"
-        onClick={addExperience}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Add Experience
-      </button>
+          <h3 className="text-lg font-semibold">Experience</h3>
+          {formData.workExperience.map((exp, i) => (
+            <div key={i} className="space-y-2 border p-4 rounded">
+              <input
+                type="text"
+                name="company"
+                value={exp.company}
+                onChange={(e) => handleChange(e, i)}
+                placeholder="Company"
+                className="w-full border p-2 rounded"
+              />
+              <input
+                type="text"
+                name="jobTitle"
+                value={exp.jobTitle}
+                onChange={(e) => handleChange(e, i)}
+                placeholder="Job Title"
+                className="w-full border p-2 rounded"
+              />
+              <input
+                type="text"
+                name="startDate"
+                value={exp.startDate}
+                onChange={(e) => handleChange(e, i)}
+                placeholder="Start Date"
+                className="w-full border p-2 rounded"
+              />
+              <input
+                type="text"
+                name="endDate"
+                value={exp.endDate}
+                onChange={(e) => handleChange(e, i)}
+                placeholder="End Date"
+                className="w-full border p-2 rounded"
+              />
+              <textarea
+                name="description"
+                value={exp.description}
+                onChange={(e) => handleChange(e, i)}
+                placeholder="Description"
+                className="w-full border p-2 rounded"
+              />
+            </div>
+          ))}
 
-      <button
-        type="submit"
-        className="bg-green-600 text-white px-6 py-2 rounded"
-      >
-        Save Profile
-      </button>
-    </form>
+          <button
+            type="button"
+            onClick={addExperience}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Experience
+          </button>
+
+          <button
+            type="submit"
+            className="bg-green-600 text-white px-6 py-2 rounded"
+          >
+            Save Profile
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -12,6 +12,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const fetchProfile = async (data: any) => {
+    if (!setUser || !setToken) {
+      console.error("AuthContext is not available.");
+      return;
+    }
+
     try {
       const profile = await getProfile(data.user.id, data.token);
       console.log("Fetched profile:", profile);
@@ -57,6 +62,9 @@ const Login = () => {
       // Save to localStorage and context
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
+
+      // setUser(data.user);
+      // setToken(data.token);
 
       fetchProfile(data);
 

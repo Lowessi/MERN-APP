@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-const ProfileLayout = () => {
+const PreviewLayout = () => {
   return (
     <div>
       <div>
@@ -10,4 +10,4 @@ const ProfileLayout = () => {
   );
 };
 
-export default ProfileLayout;
+export default PreviewLayout;

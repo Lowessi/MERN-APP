@@ -8,7 +8,7 @@ const Navbar = () => {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="py-3 border-b border-b-[#597445] bg-white shadow-md sticky top-0 z-50">
+    <div className="py-2 border-b border-b-[#597445] bg-white shadow-md sticky top-0 z-50">
       <nav className="flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo */}
         <div className="text-2xl font-semibold text-green-700">

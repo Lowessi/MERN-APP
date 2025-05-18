@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Nav from "../navbars/Nav";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import Footer from "../footer/Footer";
 
 const RegisterLayout = () => {
   const { user } = useContext(AuthContext) || {};
@@ -15,11 +16,12 @@ const RegisterLayout = () => {
   }, [user, navigate]);
 
   return (
-    <div className="bg-[#f3f4f6]">
+    <div className=" flex flex-col justify-between h-screen bg-[#f3f4f6]">
       <Nav />
       <div>
         <Outlet />
       </div>
+      <Footer />
     </div>
   );
 };

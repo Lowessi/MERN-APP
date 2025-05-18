@@ -1,4 +1,6 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 
 type ExperienceItem = {
@@ -18,7 +20,10 @@ type ProfileData = {
 };
 
 const EditProfile = () => {
+  const navigate = useNavigate();
   const { token } = useContext(AuthContext) || {};
+  const [hasExistingProfile, setHasExistingProfile] = useState(false);
+
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
     location: "",
@@ -37,7 +42,6 @@ const EditProfile = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // Fetch existing profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -48,6 +52,8 @@ const EditProfile = () => {
         });
         if (res.ok) {
           const data = await res.json();
+          setHasExistingProfile(true); // ✅ Mark that a profile exists
+
           setFormData({
             name: data.name || "",
             location: data.location || "",
@@ -72,6 +78,7 @@ const EditProfile = () => {
         setLoading(false);
       }
     };
+
     if (token) fetchProfile();
   }, [token]);
 
@@ -126,12 +133,21 @@ const EditProfile = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Profile saved successfully.");
+        toast.success("Profile saved successfully!");
+
+        // ✅ Navigate to home only if it's the first time creating a profile
+        if (!hasExistingProfile) {
+          navigate("/home");
+        }
+
+        // ✅ Update the state so future saves won't redirect
+        setHasExistingProfile(true);
       } else {
-        alert("Failed to save profile: " + data.error);
+        toast.error(data.error || "Failed to save profile.");
       }
     } catch (err) {
       console.error("Failed to submit profile:", err);
+      toast.error("Something went wrong while saving your profile.");
     }
   };
 

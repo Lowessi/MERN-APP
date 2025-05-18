@@ -1,21 +1,20 @@
+// routes/JobRoutes.js
 const express = require("express");
-const router = express.Router();
-
+const requireAuth = require("../middleware/ReqAuth");
 const {
-  jobPost,
+  postJob,
   getAllJobs,
-  searchJobs, // <-- Add search controller
+  getJobById,
+  searchJobs,
 } = require("../Controllers/JobController");
 
-const requireAuth = require("../middleware/ReqAuth");
+const router = express.Router();
 
-// Route to post a new job (requires login)
-router.post("/jobpost", requireAuth, jobPost);
+router.use(requireAuth);
 
-// Route to get all jobs (publicly accessible)
+router.post("/jobpost", postJob);
 router.get("/", getAllJobs);
-
-// Route to search jobs by query (publicly accessible)
-router.get("/search", searchJobs); // <-- New route
+router.get("/search", searchJobs);
+router.get("/:id", getJobById);
 
 module.exports = router;

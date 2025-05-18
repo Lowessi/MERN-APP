@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "../../navbars/Nav";
 import { toast } from "react-toastify";
 
 const Register = () => {
@@ -49,7 +48,7 @@ const Register = () => {
   };
 
   return (
-    <div className="bg-[#f3f4f6] min-h-screen">
+    <div className="bg-[#f3f4f6] h-full">
       <div className="flex justify-center items-center mt-10">
         <form
           onSubmit={handleSubmit}

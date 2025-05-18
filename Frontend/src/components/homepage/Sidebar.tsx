@@ -13,7 +13,6 @@ const Sidebar = () => {
   const auth = useContext(AuthContext);
   const user = auth?.user;
   const token = auth?.token;
-  const signOut = auth?.signOut;
 
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true); // Loading state
@@ -51,10 +50,6 @@ const Sidebar = () => {
     return <div>Loading...</div>;
   }
 
-  const handleSignOut = () => {
-    if (signOut) signOut();
-  };
-
   return (
     <div className="px-5 py-5 sticky top-0">
       <aside className="w-60 h-100 p-4 bg-white shadow-sm border border-gray-300 rounded-[15px]">
@@ -73,24 +68,10 @@ const Sidebar = () => {
 
         <div className="flex flex-col space-y-2 text-sm">
           <Link
-            to="/edit-profile"
-            className="text-black hover:text-gray-500 hover:underline"
-          >
-            Profile
-          </Link>
-          <Link
             to="/my-jobs"
             className="text-black hover:text-gray-500 hover:underline"
           >
             My Jobs
-          </Link>
-          <Link to="/login">
-            <button
-              onClick={handleSignOut}
-              className="text-black hover:text-gray-500 hover:underline"
-            >
-              Sign Out
-            </button>
           </Link>
         </div>
 

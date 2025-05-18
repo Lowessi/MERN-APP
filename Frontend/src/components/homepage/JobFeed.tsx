@@ -46,7 +46,7 @@ const JobFeed = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-    fetchJobs(value); // Refetch jobs based on new search input
+    fetchJobs(value);
   };
 
   return (
@@ -69,9 +69,10 @@ const JobFeed = () => {
             jobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border"
+                onClick={() => navigate(`/job-preview/${job._id}`)}
+                className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border cursor-pointer hover:bg-gray-50 transition"
               >
-                <h3 className="text-green-700 font-medium hover:underline cursor-pointer">
+                <h3 className="text-green-700 font-medium hover:underline">
                   {job.Title}
                 </h3>
                 <p className="text-sm">{job.UserId?.Email}</p>

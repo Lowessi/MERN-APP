@@ -1,17 +1,16 @@
 export interface User {
-  _id: string;
-  Email: string;
+  _id?: string;
+  userId?: string; // ✅ Add this line (for profiles)
   name?: string;
+  Email?: string;
+  email?: string; // depending on whether you use `email` or `Email`
   location?: string;
-  title?: string;
   skills?: string[];
   workExperience?: {
-    company: string;
     jobTitle: string;
-    role: string;
+    company: string;
     duration: string;
     description: string;
   }[];
-  createdAt?: string;
-  updatedAt?: string;
+  title?: string;
 }

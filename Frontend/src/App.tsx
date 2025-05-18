@@ -1,36 +1,26 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext"; // Import AuthContext to access user data
 import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
-import LoginLayout from "./components/layouts/LoginLayout";
 import RegisterLayout from "./components/layouts/RegisterLayout";
 import LandingLayout from "./components/layouts/LandingLayout";
 import Landing from "./components/Landing";
-import ContactLayout from "./components/layouts/ContactLayout";
 import Contact from "./components/Contact";
-import AboutLayout from "./components/layouts/AboutLayout";
 import About from "./components/About";
 import HomeLayout from "./components/layouts/HomeLayout";
 import Home from "./components/homepage/Home";
 import PostLayout from "./components/layouts/PostLayout";
 import PostJob from "./components/PostJob";
-import Footer from "./components/footer/Footer";
-import ProfileLayout from "./components/layouts/ProfileLayout";
+import ProfileLayout from "./components/layouts/PreviewLayout";
 import FreelanceLayout from "./components/layouts/FreelanceLayout";
 import Freelance from "./components/freelancer/Freelance";
 
 import ProfilePreview from "./components/editprofile/ProfilePreview";
 import EditProfile from "./components/editprofile/EditProfile";
+import PreviewLayout from "./components/layouts/PreviewLayout";
+import JobPreview from "./components/homepage/JobPreview";
 
 const App = () => {
-  const { user } = useContext(AuthContext) || {}; // Get user from context (fallback to empty object)
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -39,7 +29,7 @@ const App = () => {
     },
     {
       path: "/login",
-      element: <LoginLayout />, // Redirect logged-in users to /home
+      element: <RegisterLayout />, // Redirect logged-in users to /home
       children: [{ path: "", element: <Login /> }],
     },
     {
@@ -49,12 +39,12 @@ const App = () => {
     },
     {
       path: "/contact",
-      element: <ContactLayout />, // Redirect logged-in users to /home
+      element: <LandingLayout />, // Redirect logged-in users to /home
       children: [{ path: "", element: <Contact /> }],
     },
     {
       path: "/about",
-      element: <AboutLayout />, // Redirect logged-in users to /home
+      element: <LandingLayout />, // Redirect logged-in users to /home
       children: [{ path: "", element: <About /> }],
     },
     {
@@ -74,8 +64,13 @@ const App = () => {
     },
     {
       path: "/profile-preview",
-      element: <ProfileLayout />,
+      element: <PreviewLayout />,
       children: [{ path: "", element: <ProfilePreview /> }],
+    },
+    {
+      path: "/job-preview/:id",
+      element: <PreviewLayout />,
+      children: [{ path: "", element: <JobPreview /> }],
     },
     {
       path: "/profile-preview/:id",
@@ -90,11 +85,10 @@ const App = () => {
   ]);
 
   return (
-    <>
+    <div className="min-h-screen">
       <ToastContainer />
       <RouterProvider router={router} />
-      <Footer />
-    </>
+    </div>
   );
 };
 

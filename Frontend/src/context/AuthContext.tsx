@@ -1,9 +1,8 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
 
 interface User {
-  id: string;
+  _id: string; // instead of `id`
   email: string;
-  // Add other fields if needed (like name, etc.)
 }
 
 interface AuthContextType {

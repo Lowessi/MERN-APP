@@ -15,13 +15,17 @@ const Login = () => {
     try {
       const profile = await getProfile(data.user.id, data.token);
       console.log("Fetched profile:", profile);
-      // navigate("/home");
+
+      if (profile) {
+        navigate("/home");
+      } else {
+        navigate("/edit-profile");
+      }
     } catch (error: any) {
       console.error("Error fetching profile in Home.tsx:", error.message);
-      // Show UI error, redirect, etc.
+      navigate("/edit-profile"); // Redirect to edit profile page
     }
 
-    navigate("/edit-profile"); // Redirect to edit profile page
     // console.log("FUCK");
   };
 
@@ -58,10 +62,11 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
 
-      fetchProfile(data);
+      setUser(data.user);
+      setToken(data.token);
 
+      await fetchProfile(data); // Ensure navigation occurs after this completes
       toast.success("Login successful!");
-      // navigate("/home");
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Something went wrong. Please try again.");
@@ -69,7 +74,7 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#f3f4f6] min-h-screen flex justify-center items-center">
+    <div className="bg-[#f3f4f6] h-full flex justify-center items-center">
       <form
         onSubmit={onSubmit}
         className="shadow-md flex flex-col gap-5 p-8 rounded-lg bg-white w-full max-w-md"

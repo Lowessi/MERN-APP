@@ -1,3 +1,4 @@
+// models/JobModel.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -33,7 +34,7 @@ const JobSchema = new Schema(
   { timestamps: true }
 );
 
-// Static method to post a new job
+// Post a new job
 JobSchema.statics.JobPost = async function (
   userId,
   title,
@@ -50,17 +51,16 @@ JobSchema.statics.JobPost = async function (
     Budget: budget,
     Deadline: deadline,
   });
-
   await job.save();
   return job;
 };
 
-// Static method to get all jobs (newest first)
+// Get all jobs (newest first with user info)
 JobSchema.statics.getAllJobs = async function () {
-  return this.find().sort({ createdAt: -1 });
+  return this.find().populate("UserId", "Email").sort({ createdAt: -1 });
 };
 
-// Static method to search jobs by query
+// Search jobs
 JobSchema.statics.searchJobs = async function (query) {
   return this.find({
     $or: [
@@ -68,7 +68,14 @@ JobSchema.statics.searchJobs = async function (query) {
       { Description: { $regex: query, $options: "i" } },
       { Requirements: { $regex: query, $options: "i" } },
     ],
-  }).sort({ createdAt: -1 });
+  })
+    .populate("UserId", "Email")
+    .sort({ createdAt: -1 });
+};
+
+// Get job by ID
+JobSchema.statics.getJobById = async function (id) {
+  return this.findById(id).populate("UserId", "Email");
 };
 
 module.exports = mongoose.model("JobModel", JobSchema);

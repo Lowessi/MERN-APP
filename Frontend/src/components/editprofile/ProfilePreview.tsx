@@ -2,29 +2,13 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { AuthContext } from "../../context/AuthContext";
-import { getProfile } from "../../api/Profile";
-import { getUser } from "../../api/User";
 
 const ProfilePreview = () => {
   const [user, setUser] = useState<User | null>(null);
-  const { token, user: authUser } = useContext(AuthContext) || {}; // ✅ grab user from AuthContext
+  const { token, user: authUser } = useContext(AuthContext) || {};
   const navigate = useNavigate();
-
-  const params = useParams();
-
-  const getAccount = async () => {
-    console.log(params.id, token);
-
-    if (!params.id || !token) return;
-
-    const loggedIn = await getProfile(params.id, token);
-
-    if (loggedIn) {
-      const user = getUser(loggedIn.userId._id);
-      console.log(user);
-    }
-    console.log(loggedIn, params.id);
-  };
+  const { id: profileId } = useParams();
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -32,27 +16,36 @@ const ProfilePreview = () => {
       return;
     }
 
-    getAccount();
-
-    const fetchUserProfile = async () => {
+    const fetchProfile = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/profile/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          profileId && profileId !== "me"
+            ? `http://localhost:5000/api/profile/${profileId}`
+            : `http://localhost:5000/api/profile/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        if (!res.ok) throw new Error("Failed to fetch user profile");
+        if (!res.ok) throw new Error("Failed to fetch profile");
 
         const data: User = await res.json();
         setUser(data);
+
+        if (!profileId || profileId === "me" || data.userId === authUser?._id) {
+          setIsOwnProfile(true);
+        } else {
+          setIsOwnProfile(false);
+        }
       } catch (err) {
         console.error("Error fetching profile:", err);
       }
     };
 
-    fetchUserProfile();
-  }, [token, navigate]);
+    fetchProfile();
+  }, [token, navigate, profileId, authUser]);
 
   if (!user)
     return (
@@ -65,34 +58,36 @@ const ProfilePreview = () => {
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 mt-6 border border-gray-200">
       {/* Header Section */}
       <div className="flex items-center gap-4">
-        <img
-          src="/default-avatar.png"
-          alt="Profile"
-          className="w-24 h-24 rounded-full object-cover"
-        />
+        {/* Avatar */}
+        <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-semibold">
+          {user.email?.charAt(0).toUpperCase()}
+        </div>
+
+        {/* User Info */}
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-800">
             {user.name || "Unnamed Freelancer"}
           </h1>
-          <p className="text-gray-500">
-            {authUser?.email || "No email provided"}
-          </p>{" "}
-          {/* ✅ fixed here */}
+          <p className="text-gray-500">{user.email}</p>
           <p className="text-gray-500">
             {user.location || "No address provided"}
           </p>
         </div>
-        <button
-          onClick={() => navigate("/edit-profile")}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Edit Profile
-        </button>
+
+        {/* Edit Button (if own profile) */}
+        {isOwnProfile && (
+          <button
+            onClick={() => navigate("/edit-profile")}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Edit Profile
+          </button>
+        )}
       </div>
 
       <hr className="my-6 border-gray-300" />
 
-      {/* Skills */}
+      {/* Skills Section */}
       <section className="mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-2">Skills</h2>
         {user.skills?.length ? (
@@ -111,7 +106,7 @@ const ProfilePreview = () => {
         )}
       </section>
 
-      {/* Work Experience */}
+      {/* Work Experience Section */}
       <section>
         <h2 className="text-xl font-semibold text-gray-800 mb-2">
           Work Experience

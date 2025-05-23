@@ -3,12 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Job } from "../../interfaces/Job";
 import JobFeed from "./JobFeed";
+import Messaging from "./Messaging";
 
 const JobPreview = () => {
   const { id } = useParams<{ id: string }>();
   const [job, setJob] = useState<Job | null>(null);
   const { token } = useContext(AuthContext) || {};
   const navigate = useNavigate();
+  const [showMessageCard, setShowMessageCard] = useState(false);
+
+  function showMessage() {
+    setShowMessageCard((prev) => !prev);
+  }
 
   useEffect(() => {
     if (!token) {
@@ -89,7 +95,7 @@ const JobPreview = () => {
           </button>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-            onClick={() => alert("Message feature coming soon")}
+            onClick={showMessage}
           >
             Message
           </button>
@@ -98,7 +104,13 @@ const JobPreview = () => {
 
       {/* Right-side Job Feed */}
       <div className="w-full lg:w-[400px]">
-        <JobFeed />
+        {showMessageCard && (
+          <div>
+            <Messaging recipientId={job.UserId?._id} />
+          </div>
+        )}
+
+        {/* <JobFeed /> */}
       </div>
     </div>
   );

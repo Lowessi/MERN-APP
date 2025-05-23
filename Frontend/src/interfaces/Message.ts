@@ -1,14 +1,8 @@
-// types/Message.ts
-export interface Message {
-  _id?: string;
-  sender: {
-    _id: string;
-    Email: string;
-  };
-  receiver: {
-    _id: string;
-    Email: string;
-  };
+interface Message {
+  from: string;
+  to: string;
   text: string;
-  createdAt: string;
+  timestamp?: string;
 }
+
+export default Message;

@@ -1,9 +1,9 @@
-require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+require("dotenv").config();
 
 // Import routes
 const UserAuth = require("./Routes/UserAuth");
@@ -12,12 +12,14 @@ const ProfileRoutes = require("./Routes/ProfileRoutes");
 const MessageRoutes = require("./Routes/MessageRoutes");
 
 // Import models for real-time saving
-const MessageModel = require("./Models/MessageModel");
-const ConversationModel = require("./Models/ConvoModel");
+// const MessageModel = require("./Models/MessageModel");
+// const ConversationModel = require("./Models/ConvoModel");
 
 // App setup
 const app = express();
 const server = http.createServer(app);
+
+const messages = [];
 
 // Socket.IO setup
 const io = new Server(server, {
@@ -26,6 +28,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+let onlineUsers = new Map();
 
 // Middleware
 app.use(cors());
@@ -43,58 +47,34 @@ app.use("/api/jobs", JobRoutes);
 app.use("/api/profile", ProfileRoutes);
 app.use("/api/chat", MessageRoutes); // ✅ Messaging routes
 
-// Socket.IO logic
 io.on("connection", (socket) => {
-  console.log("New client connected:", socket.id);
+  console.log("User connected:", socket.id);
 
-  // Join a room by user ID
-  socket.on("joinRoom", (userId) => {
-    socket.join(userId);
-    console.log(`Socket ${socket.id} joined room ${userId}`);
+  socket.on("user-connected", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    console.log("User connected with ID:", userId);
   });
 
-  // Real-time message handling
-  socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
-    try {
-      // Find or create conversation
-      let conversation = await ConversationModel.findOne({
-        participants: { $all: [senderId, receiverId] },
-      });
+  socket.on("send-message", ({ to, from, text }) => {
+    // Save message to "DB"
+    const message = { to, from, text, timestamp: new Date() };
+    messages.push(message);
 
-      if (!conversation) {
-        conversation = await ConversationModel.create({
-          participants: [senderId, receiverId],
-        });
-      }
-
-      // Save the message
-      const message = await MessageModel.create({
-        conversationId: conversation._id,
-        senderId,
-        receiverId,
-        text,
-      });
-
-      // Update last message
-      await ConversationModel.findByIdAndUpdate(conversation._id, {
-        lastMessage: {
-          text,
-          senderId,
-          createdAt: new Date(),
-        },
-      });
-
-      // Emit to receiver and sender
-      io.to(receiverId).emit("receiveMessage", { message });
-      socket.emit("messageSent", { message });
-    } catch (err) {
-      console.error("Socket sendMessage error:", err);
-      socket.emit("error", { message: "Failed to send message" });
+    // Send message in real-time if recipient online
+    const recipientSocket = onlineUsers.get(to);
+    if (recipientSocket) {
+      io.to(recipientSocket).emit("receive-message", message);
     }
   });
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
+    console.log("User disconnected:", socket.id);
+    for (const [userId, sockId] of onlineUsers.entries()) {
+      if (sockId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
   });
 });
 

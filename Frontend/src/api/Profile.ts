@@ -1,4 +1,4 @@
-const URL = "http://localhost:5000/api/profile"
+const URL = "http://localhost:5000/api/profile";
 
 const getProfile = async (userId: string, token: string) => {
   console.log(userId, token);
@@ -11,7 +11,7 @@ const getProfile = async (userId: string, token: string) => {
     // Manually throw if response is not ok
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch profile');
+      throw new Error(errorData.message || "Failed to fetch profile");
     }
 
     const user = await response.json();

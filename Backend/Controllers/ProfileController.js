@@ -1,5 +1,4 @@
 const ProfileModel = require("../Models/ProfileModel");
-// import ProfileModel from "../Models/ProfileModel";
 
 // Create or update profile
 const upsertProfile = async (req, res) => {
@@ -35,7 +34,7 @@ const getMyProfile = async (req, res) => {
     // Attach the email to the profile data
     res.status(200).json({
       ...profile, // Return the populated profile data
-      email: profile.userId?.Email || "No email provided", // Check if Email is populated correctly
+      email: profile.userId?.Email || profile.userId?.email, // Check if Email is populated correctly
     });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
@@ -46,16 +45,18 @@ const getMyProfile = async (req, res) => {
 const getProfileById = async (req, res) => {
   try {
     const { id } = req.params;
-    // Populate the user's email for the public profile
     const profile = await ProfileModel.findOne({ userId: id })
-      .populate("userId", "Email") // Populate the Email field
+      .populate("userId", "Email")
       .lean();
 
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    res.status(200).json(profile);
+    res.status(200).json({
+      ...profile,
+      email: profile.userId?.Email || "No email provided",
+    });
   } catch (error) {
     console.error("Error fetching profile:", error.message);
     res.status(500).json({ message: "Server error" });

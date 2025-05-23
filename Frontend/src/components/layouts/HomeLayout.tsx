@@ -14,7 +14,7 @@ const HomeLayout = () => {
   }, [user, navigate]);
   return (
     <div>
-      <HomeNavbar />
+      <HomeNavbar />{" "}
       <div>
         <Outlet />
       </div>

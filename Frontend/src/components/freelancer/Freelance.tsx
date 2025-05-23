@@ -1,4 +1,3 @@
-import Messaging from "../homepage/Messaging";
 import Sidebar from "../homepage/Sidebar";
 import FreelancerFeed from "./FreelanceFeed";
 
@@ -8,7 +7,6 @@ const Freelance = () => {
       <div className="flex px-30">
         <Sidebar />
         <FreelancerFeed />
-        <Messaging />
       </div>
     </div>
   );

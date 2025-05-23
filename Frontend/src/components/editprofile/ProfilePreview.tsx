@@ -60,7 +60,8 @@ const ProfilePreview = () => {
       <div className="flex items-center gap-4">
         {/* Avatar */}
         <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-semibold">
-          {user.email?.charAt(0).toUpperCase()}
+          {user.name?.charAt(0).toUpperCase() ||
+            user.email?.charAt(0).toUpperCase()}
         </div>
 
         {/* User Info */}
@@ -68,7 +69,7 @@ const ProfilePreview = () => {
           <h1 className="text-2xl font-bold text-gray-800">
             {user.name || "Unnamed Freelancer"}
           </h1>
-          <p className="text-gray-500">{user.email}</p>
+          <p className="text-gray-500">{user.email || "No email provided"}</p>
           <p className="text-gray-500">
             {user.location || "No address provided"}
           </p>

@@ -1,6 +1,6 @@
 // types/Message.ts
 export interface Message {
-  _id?: string;
+  _id: string;
   sender: {
     _id: string;
     Email: string;
@@ -11,4 +11,24 @@ export interface Message {
   };
   text: string;
   createdAt: string;
+}
+
+// src/types/chat.ts
+
+export interface User {
+  _id: string;
+  Email: string;
+}
+
+export interface Message {
+  _id: string;
+  text: string;
+  senderId: string;
+  conversationId: string;
+}
+
+export interface Conversation {
+  _id: string;
+  participants: User[];
+  lastMessage?: Message;
 }

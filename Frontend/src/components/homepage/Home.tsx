@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/AuthContext"; // Adjust the path as n
 import JobFeed from "./JobFeed";
 import Sidebar from "./Sidebar";
 import { getProfile } from "../../api/Profile";
+import Messaging from "./Messaging";
 
 const Home = () => {
   const { token, user } = useContext(AuthContext) || {}; // ✅ grab user from AuthContext

@@ -6,6 +6,9 @@ const {
   getAllJobs,
   getJobById,
   searchJobs,
+  getMyJobs,
+  deleteJob,
+  updateJob,
 } = require("../Controllers/JobController");
 
 const router = express.Router();
@@ -13,8 +16,10 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.post("/jobpost", postJob);
+router.get("/my", getMyJobs); // <-- moved up
+router.get("/search", searchJobs); // <-- search before :id too
 router.get("/", getAllJobs);
-router.get("/search", searchJobs);
 router.get("/:id", getJobById);
-
+router.delete("/:id", deleteJob);
+router.put("/:id", updateJob);
 module.exports = router;

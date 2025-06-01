@@ -1,5 +1,8 @@
+import { useContext } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+
+import { AuthContext } from "./context/AuthContext";
 
 import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
@@ -20,6 +23,9 @@ import ProfilePreview from "./components/editprofile/ProfilePreview";
 import EditProfile from "./components/editprofile/EditProfile";
 import PreviewLayout from "./components/layouts/PreviewLayout";
 import JobPreview from "./components/homepage/JobPreview";
+import Messaging from "./components/homepage/Messaging";
+import MyJobs from "./components/homepage/MyJobs";
+import EditJob from "./components/homepage/EditJobs";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +59,17 @@ const router = createBrowserRouter([
     children: [{ path: "", element: <Home /> }],
   },
   {
+    path: "/my-jobs",
+    element: <HomeLayout />,
+    children: [{ path: "", element: <MyJobs /> }],
+  },
+  {
+    path: "/edit-jobs/:id", // ✅ correct dynamic route
+    element: <HomeLayout />,
+    children: [{ path: "", element: <EditJob /> }],
+  },
+
+  {
     path: "/edit-profile",
     element: <ProfileLayout />,
     children: [{ path: "", element: <EditProfile /> }],
@@ -85,12 +102,20 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
+  const authContext = useContext(AuthContext);
+  const userId = authContext?.user?.id || null;
+
+  // Example of a chat partner, replace with your dynamic logic later
+
+  console.log("Logged-in userId:", userId);
+
   return (
     <div className="min-h-screen">
       <ToastContainer />
       <RouterProvider router={router} />
-      {/* Global Chat Popup Component */}
-      {/* <- Ensure withUserId is optional in Messaging component */}
+
+      {/* Show Messaging only if logged in */}
+      {userId && <Messaging userId={userId} />}
     </div>
   );
 };

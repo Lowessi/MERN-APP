@@ -58,7 +58,7 @@ const SigninUser = async (req, res) => {
 
 const searchUsers = async (req, res) => {
   try {
-    const { query } = req.query;
+    const { query, userId } = req.query;
 
     if (!query || query.trim() === "") {
       return res.status(400).json({ error: "Search query is required" });
@@ -66,14 +66,20 @@ const searchUsers = async (req, res) => {
 
     const regex = new RegExp(query, "i");
 
-    // Step 1: Find users by email matching
-    const users = await UserModel.find({ Email: { $regex: regex } });
+    // Find profiles matching name
+    const profiles = await ProfileModel.find({ name: { $regex: regex } });
+    const profileUserIds = profiles.map((p) => p.userId.toString());
 
-    // Step 2: Join with profile data
+    // Find users matching email or profile name, excluding the current user
+    const users = await UserModel.find({
+      $or: [{ Email: { $regex: regex } }, { _id: { $in: profileUserIds } }],
+      _id: { $ne: userId }, // exclude current user
+    });
+
+    // Attach name and other profile info
     const results = await Promise.all(
       users.map(async (user) => {
         const profile = await ProfileModel.findOne({ userId: user._id });
-
         return {
           _id: user._id,
           Email: user.Email,
@@ -84,9 +90,9 @@ const searchUsers = async (req, res) => {
     );
 
     res.status(200).json(results);
-  } catch (err) {
-    console.error("Search failed:", err.message);
-    res.status(500).json({ error: "Search failed" });
+  } catch (error) {
+    console.error("Search error:", error.message);
+    res.status(500).json({ error: "Server error during search" });
   }
 };
 

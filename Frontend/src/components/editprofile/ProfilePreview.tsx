@@ -84,6 +84,14 @@ const ProfilePreview = () => {
             Edit Profile
           </button>
         )}
+        {!isOwnProfile && (
+          <button
+            onClick={() => navigate("")}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Message
+          </button>
+        )}
       </div>
 
       <hr className="my-6 border-gray-300" />

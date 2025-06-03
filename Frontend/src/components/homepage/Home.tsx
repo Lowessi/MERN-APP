@@ -1,17 +1,12 @@
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext"; // Adjust the path as needed
+import { AuthContext } from "../../context/AuthContext";
 import JobFeed from "./JobFeed";
 import Sidebar from "./Sidebar";
 import { getProfile } from "../../api/Profile";
-<<<<<<< HEAD
-=======
-import socket from "../../socket";
->>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f
-import Messaging from "./Messaging";
 
 const Home = () => {
-  const { token, user } = useContext(AuthContext) || {}; // ✅ grab user from AuthContext
+  const { token, user } = useContext(AuthContext) || {};
   const navigate = useNavigate();
 
   const fetchProfile = async (userId: string, token: string) => {
@@ -20,40 +15,35 @@ const Home = () => {
       console.log("Fetched profile:", profile);
     } catch (error: any) {
       console.error("Error fetching profile in Home.tsx:", error.message);
-      navigate("/edit-profile"); // Redirect to edit profile page
-      // Show UI error, redirect, etc.
+      navigate("/edit-profile");
     }
   };
 
+  // useEffect(() => {
+  //   if (!user) return;
+
+  //   socket.emit("user-connected", user?.id);
+
+  //   socket.on("receive-message", (message) => {
+  //     console.log("Message received:", message);
+  //   });
+
+  //   return () => {
+  //     socket.off("receive-message");
+  //   };
+  // }, [user]);
+
   useEffect(() => {
-    if (!user) return;
-
-    console.log(user);
-    socket.emit("user-connected", user?.id);
-    socket.on("receive-message", (message) => {
-      console.log(message);
-    });
-
-    return () => {
-      socket.off("receive-message");
-    };
-  }, [user]);
-
-  useEffect(() => {
-    // If there is no user, redirect to login page
     if (!user || !token) {
-      navigate("/login"); // Or you can redirect to /signin or whatever page you want
+      navigate("/login");
       return;
     }
 
-    // fetchProfile(user.id, token);
+    fetchProfile(user.id, token);
+  }, [user, token, navigate]);
 
-    // console.log(profile);
-  }, [user, navigate]); // Run effect when user changes
-
-  if (!user) {
-    // Optionally, you can return a loading spinner or message while checking for user
-    return <div>Loading...</div>;
+  if (!user || !token) {
+    return <div>Redirecting to login...</div>;
   }
 
   return (

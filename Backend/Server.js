@@ -12,15 +12,9 @@ const ProfileRoutes = require("./Routes/ProfileRoutes");
 const MessageRoutes = require("./Routes/MessageRoutes");
 const NotificationRoutes = require("./Routes/NotificationRoutes");
 
-<<<<<<< HEAD
 // Import models
 const MessageModel = require("./Models/MessageModel");
 const ConversationModel = require("./Models/ConvoModel");
-=======
-// Import models for real-time saving
-// const MessageModel = require("./Models/MessageModel");
-// const ConversationModel = require("./Models/ConvoModel");
->>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f
 
 // App setup
 const app = express();
@@ -59,7 +53,6 @@ app.use("/api/notifications", NotificationRoutes);
 const connectedUsers = new Map();
 
 io.on("connection", (socket) => {
-<<<<<<< HEAD
   console.log("🟢 New client connected:", socket.id);
 
   // Join personal room
@@ -106,24 +99,6 @@ io.on("connection", (socket) => {
     } catch (err) {
       console.error("❌ sendMessage error:", err);
       socket.emit("error", { message: "Failed to send message" });
-=======
-  console.log("User connected:", socket.id);
-
-  socket.on("user-connected", (userId) => {
-    onlineUsers.set(userId, socket.id);
-    console.log("User connected with ID:", userId);
-  });
-
-  socket.on("send-message", ({ to, from, text }) => {
-    // Save message to "DB"
-    const message = { to, from, text, timestamp: new Date() };
-    messages.push(message);
-
-    // Send message in real-time if recipient online
-    const recipientSocket = onlineUsers.get(to);
-    if (recipientSocket) {
-      io.to(recipientSocket).emit("receive-message", message);
->>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f
     }
   });
 
@@ -140,17 +115,11 @@ io.on("connection", (socket) => {
 
   // ----- Disconnect -----
   socket.on("disconnect", () => {
-<<<<<<< HEAD
     console.log("🔴 Client disconnected:", socket.id);
     for (let [userId, sockId] of connectedUsers.entries()) {
       if (sockId === socket.id) {
         connectedUsers.delete(userId);
-=======
-    console.log("User disconnected:", socket.id);
-    for (const [userId, sockId] of onlineUsers.entries()) {
-      if (sockId === socket.id) {
-        onlineUsers.delete(userId);
->>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f
+
         break;
       }
     }

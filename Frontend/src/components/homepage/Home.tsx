@@ -4,6 +4,10 @@ import { AuthContext } from "../../context/AuthContext"; // Adjust the path as n
 import JobFeed from "./JobFeed";
 import Sidebar from "./Sidebar";
 import { getProfile } from "../../api/Profile";
+<<<<<<< HEAD
+=======
+import socket from "../../socket";
+>>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f
 import Messaging from "./Messaging";
 
 const Home = () => {
@@ -20,6 +24,20 @@ const Home = () => {
       // Show UI error, redirect, etc.
     }
   };
+
+  useEffect(() => {
+    if (!user) return;
+
+    console.log(user);
+    socket.emit("user-connected", user?.id);
+    socket.on("receive-message", (message) => {
+      console.log(message);
+    });
+
+    return () => {
+      socket.off("receive-message");
+    };
+  }, [user]);
 
   useEffect(() => {
     // If there is no user, redirect to login page
@@ -43,6 +61,7 @@ const Home = () => {
       <div className="flex px-30">
         <Sidebar />
         <JobFeed />
+        {/* <Messaging /> */}
       </div>
     </div>
   );

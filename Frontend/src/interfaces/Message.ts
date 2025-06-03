@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // types/Message.ts
 export interface Message {
   _id: string;
@@ -9,10 +10,16 @@ export interface Message {
     _id: string;
     Email: string;
   };
+=======
+interface Message {
+  from: string;
+  to: string;
+>>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f
   text: string;
-  createdAt: string;
+  timestamp?: string;
 }
 
+<<<<<<< HEAD
 // src/types/chat.ts
 
 export interface User {
@@ -32,3 +39,6 @@ export interface Conversation {
   participants: User[];
   lastMessage?: Message;
 }
+=======
+export default Message;
+>>>>>>> 68c342b1b5ecb45ccec3cf8954896021fb375a7f

@@ -14,8 +14,6 @@ export interface Message {
   timestamp?: string;
 }
 
-// src/types/chat.ts
-
 export interface User {
   _id: string;
   Email: string;

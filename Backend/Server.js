@@ -10,8 +10,9 @@ const UserAuth = require("./Routes/UserAuth");
 const JobRoutes = require("./Routes/JobRoutes");
 const ProfileRoutes = require("./Routes/ProfileRoutes");
 const MessageRoutes = require("./Routes/MessageRoutes");
+const NotificationRoutes = require("./Routes/NotificationRoutes");
 
-// Import models for real-time saving
+// Import models
 const MessageModel = require("./Models/MessageModel");
 const ConversationModel = require("./Models/ConvoModel");
 
@@ -22,7 +23,7 @@ const server = http.createServer(app);
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "*", // Replace with frontend URL in production
+    origin: "*", // Replace with your frontend URL in production
     methods: ["GET", "POST"],
   },
 });
@@ -31,7 +32,6 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
-// Request logger (for development)
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
@@ -41,22 +41,26 @@ app.use((req, res, next) => {
 app.use("/api/userauth", UserAuth);
 app.use("/api/jobs", JobRoutes);
 app.use("/api/profile", ProfileRoutes);
-app.use("/api/chat", MessageRoutes); // ✅ Messaging routes
+app.use("/api/chat", MessageRoutes);
+app.use("/api/notifications", NotificationRoutes);
 
-// Socket.IO logic
+// ==================== SOCKET.IO ====================
+
+const connectedUsers = new Map();
+
 io.on("connection", (socket) => {
-  console.log("New client connected:", socket.id);
+  console.log("🟢 New client connected:", socket.id);
 
-  // Join a room by user ID
+  // Join personal room
   socket.on("joinRoom", (userId) => {
     socket.join(userId);
-    console.log(`Socket ${socket.id} joined room ${userId}`);
+    connectedUsers.set(userId, socket.id);
+    console.log(`✅ Socket ${socket.id} joined room for user ${userId}`);
   });
 
-  // Real-time message handling
+  // ----- Real-time messaging -----
   socket.on("sendMessage", async ({ senderId, receiverId, text }) => {
     try {
-      // Find or create conversation
       let conversation = await ConversationModel.findOne({
         participants: { $all: [senderId, receiverId] },
       });
@@ -67,7 +71,6 @@ io.on("connection", (socket) => {
         });
       }
 
-      // Save the message
       const message = await MessageModel.create({
         conversationId: conversation._id,
         senderId,
@@ -84,21 +87,42 @@ io.on("connection", (socket) => {
         },
       });
 
-      // Emit to receiver and sender
+      // Emit to receiver
       io.to(receiverId).emit("receiveMessage", { message });
+
+      // Emit back to sender
       socket.emit("messageSent", { message });
     } catch (err) {
-      console.error("Socket sendMessage error:", err);
+      console.error("❌ sendMessage error:", err);
       socket.emit("error", { message: "Failed to send message" });
     }
   });
 
+  // ----- Real-time notification -----
+  socket.on("sendNotification", ({ recipientId, notification }) => {
+    const socketId = connectedUsers.get(recipientId);
+    if (socketId) {
+      io.to(socketId).emit("receiveNotification", notification);
+      console.log(`🔔 Notification sent to user ${recipientId}`);
+    } else {
+      console.log(`⚪ Recipient ${recipientId} is not connected`);
+    }
+  });
+
+  // ----- Disconnect -----
   socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
+    console.log("🔴 Client disconnected:", socket.id);
+    for (let [userId, sockId] of connectedUsers.entries()) {
+      if (sockId === socket.id) {
+        connectedUsers.delete(userId);
+        break;
+      }
+    }
   });
 });
 
-// Start server and DB
+// ==================== DATABASE & SERVER ====================
+
 const PORT = process.env.PORT || 5000;
 const MONGO = process.env.MONGO;
 
@@ -106,10 +130,10 @@ mongoose
   .connect(MONGO)
   .then(() => {
     server.listen(PORT, () => {
-      console.log(`✅ Connected to DB & listening on port ${PORT}`);
+      console.log(`✅ Connected to MongoDB & Server running on port ${PORT}`);
     });
   })
   .catch((error) => {
-    console.error("❌ Failed to connect to DB", error);
+    console.error("❌ MongoDB connection error:", error);
     process.exit(1);
   });

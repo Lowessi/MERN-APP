@@ -151,18 +151,18 @@ const HomeNavbar = () => {
 
   return (
     <div className="sticky top-0 z-50">
-      <nav className="bg-white shadow-sm px-4 py-2 flex items-center justify-between">
+      <nav className="bg-green-500 shadow-sm px-4 py-2 flex items-center justify-between">
         {/* Left: Logo */}
         <div className="flex pl-20 items-center gap-4">
-          <div className="text-green-700 text-2xl font-bold">Pablo Jobb</div>
+          <div className="text-white text-2xl font-bold">Talent</div>
         </div>
 
         {/* Center: Links */}
-        <div className="hidden sm:flex items-center gap-8 text-sm text-gray-700">
-          <Link to="/home" className="hover:text-black">
+        <div className="hidden sm:flex items-center gap-8 text-sm text-white">
+          <Link to="/home" className="hover:text-white">
             Home
           </Link>
-          <Link to="/freelancer" className="hover:text-black">
+          <Link to="/freelancer" className="hover:text-white">
             Freelancer
           </Link>
 
@@ -170,7 +170,7 @@ const HomeNavbar = () => {
             className="relative cursor-pointer"
             onClick={handleNotificationClick}
           >
-            <span className="hover:text-black">Inbox</span>
+            <span className="hover:text-white">Inbox</span>
             {(unreadCount > 0 || hasNewMessage) && (
               <span className="absolute -top-1 -right-3 bg-red-500 text-white text-xs rounded-full px-1.5">
                 ●

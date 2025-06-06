@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import Footer from "../footer/Footer";
 
 const MessagingLayout = () => {
   return (
@@ -6,6 +7,7 @@ const MessagingLayout = () => {
       <div>
         <Outlet />
       </div>
+      <Footer></Footer>
     </div>
   );
 };

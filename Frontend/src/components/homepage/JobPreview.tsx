@@ -2,19 +2,16 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Job } from "../../interfaces/Job";
-import JobFeed from "./JobFeed";
-import Messaging from "./Messaging";
+import MiniChatWindow from "../homepage/MiniChatWindow"; // ✅ import mini chat window
 
 const JobPreview = () => {
   const { id } = useParams<{ id: string }>();
   const [job, setJob] = useState<Job | null>(null);
-  const { token } = useContext(AuthContext) || {};
+  const { token, user: authUser } = useContext(AuthContext) || {};
   const navigate = useNavigate();
-  const [showMessageCard, setShowMessageCard] = useState(false);
 
-  function showMessage() {
-    setShowMessageCard((prev) => !prev);
-  }
+  const [chatConversation, setChatConversation] = useState<any | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -41,6 +38,27 @@ const JobPreview = () => {
 
     fetchJob();
   }, [id, token, navigate]);
+
+  const handleMessageClick = async () => {
+    if (!authUser || !job?.UserId?._id) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/chat/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderId: authUser.id,
+          receiverId: job.UserId._id,
+        }),
+      });
+
+      const data = await res.json();
+      setChatConversation(data);
+      setChatOpen(true);
+    } catch (err) {
+      console.error("Failed to start conversation:", err);
+    }
+  };
 
   if (!job) {
     return (
@@ -95,23 +113,29 @@ const JobPreview = () => {
           </button>
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-            onClick={showMessage}
+            onClick={handleMessageClick}
           >
             Message
           </button>
         </div>
       </div>
 
-      {/* Right-side Job Feed */}
+      {/* Right-side column (optional job feed or other features) */}
       <div className="w-full lg:w-[400px]">
-        {showMessageCard && (
-          <div>
-            <Messaging recipientId={job.UserId?._id} />
-          </div>
-        )}
-
+        {/* You can re-enable JobFeed if needed */}
         {/* <JobFeed /> */}
       </div>
+
+      {/* ✅ Mini Chat Window */}
+      {chatOpen && chatConversation && authUser && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <MiniChatWindow
+            conversation={chatConversation}
+            currentUserId={authUser.id}
+            onClose={() => setChatOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

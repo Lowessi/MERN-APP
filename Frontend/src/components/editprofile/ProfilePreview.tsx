@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { AuthContext } from "../../context/AuthContext";
+import MiniChatWindow from "../homepage/MiniChatWindow"; // ✅ import the mini chat window
 
 const ProfilePreview = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -9,6 +10,9 @@ const ProfilePreview = () => {
   const navigate = useNavigate();
   const { id: profileId } = useParams();
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+
+  const [chatConversation, setChatConversation] = useState<any | null>(null); // ✅ store conversation state
+  const [chatOpen, setChatOpen] = useState(false); // ✅ control mini window open
 
   useEffect(() => {
     if (!token) {
@@ -34,7 +38,7 @@ const ProfilePreview = () => {
         const data: User = await res.json();
         setUser(data);
 
-        if (!profileId || profileId === "me" || data.userId === authUser?._id) {
+        if (!profileId || profileId === "me" || data.userId === authUser?.id) {
           setIsOwnProfile(true);
         } else {
           setIsOwnProfile(false);
@@ -47,6 +51,27 @@ const ProfilePreview = () => {
     fetchProfile();
   }, [token, navigate, profileId, authUser]);
 
+  const handleMessageClick = async () => {
+    if (!user || !authUser) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/chat/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          senderId: authUser.id,
+          receiverId: user.userId, // assuming userId is stored in profile
+        }),
+      });
+
+      const data = await res.json();
+      setChatConversation(data);
+      setChatOpen(true);
+    } catch (err) {
+      console.error("Failed to start conversation:", err);
+    }
+  };
+
   if (!user)
     return (
       <div className="flex justify-center mt-10 text-gray-500 text-lg">
@@ -55,7 +80,7 @@ const ProfilePreview = () => {
     );
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 mt-6 border border-gray-200">
+    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 mt-6 border border-gray-200 relative">
       {/* Header Section */}
       <div className="flex items-center gap-4">
         {/* Avatar */}
@@ -76,17 +101,16 @@ const ProfilePreview = () => {
         </div>
 
         {/* Edit Button (if own profile) */}
-        {isOwnProfile && (
+        {isOwnProfile ? (
           <button
             onClick={() => navigate("/edit-profile")}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Edit Profile
           </button>
-        )}
-        {!isOwnProfile && (
+        ) : (
           <button
-            onClick={() => navigate("")}
+            onClick={handleMessageClick}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Message
@@ -139,6 +163,17 @@ const ProfilePreview = () => {
           <p className="text-gray-500">No work experience listed.</p>
         )}
       </section>
+
+      {/* ✅ Mini Chat Window (only if chat is started) */}
+      {chatOpen && chatConversation && authUser && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <MiniChatWindow
+            conversation={chatConversation}
+            currentUserId={authUser.id}
+            onClose={() => setChatOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

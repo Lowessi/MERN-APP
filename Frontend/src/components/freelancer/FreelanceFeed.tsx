@@ -68,12 +68,12 @@ const FreelancerFeed = () => {
                 onClick={() => navigate(`/profile-preview/${user._id}`)} // Navigate to profile preview on click
                 className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border cursor-pointer hover:shadow-md transition"
               >
-                <h3 className="text-blue-700 font-medium">
+                <h3 className="text-green-500 font-medium">
                   {user.name || "Unnamed Freelancer"}
                 </h3>
                 <p className="text-sm text-gray-700">{user.Email}</p>
                 <p className="text-xs text-gray-500">
-                  {user.location || "No address provided"}
+                  {user.address || "No address provided"}
                 </p>
                 <p className="text-xs text-gray-500">
                   {user.title || "No title provided"}

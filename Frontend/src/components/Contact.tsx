@@ -43,47 +43,6 @@ const Contact = () => {
       </section>
 
       {/* Contact Form */}
-      <section className="bg-[#f3f4f6] py-16 px-6">
-        <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow">
-          <h2 className="text-2xl font-bold mb-6 text-black text-center">
-            Send us a message
-          </h2>
-          <form className="space-y-6">
-            <div>
-              <label className="block mb-1 font-medium">Name</label>
-              <input
-                type="text"
-                placeholder="Your Name"
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">Email</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-            </div>
-            <div>
-              <label className="block mb-1 font-medium">Message</label>
-              <textarea
-                rows={5}
-                placeholder="Your message..."
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              ></textarea>
-            </div>
-            <div className="text-center">
-              <button
-                type="submit"
-                className="bg-green-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-green-700 transition"
-              >
-                Send Message
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
     </div>
   );
 };

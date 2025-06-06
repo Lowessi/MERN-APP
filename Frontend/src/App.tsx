@@ -110,7 +110,7 @@ const App = () => {
   console.log("Logged-in userId:", userId);
 
   return (
-    <div className="min-h-screen">
+    <div className="h-screen fle justify-between bg-[#f3f4f6]">
       <ToastContainer />
       <RouterProvider router={router} />
 

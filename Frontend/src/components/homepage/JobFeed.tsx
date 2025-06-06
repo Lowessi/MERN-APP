@@ -72,7 +72,7 @@ const JobFeed = () => {
                 onClick={() => navigate(`/job-preview/${job._id}`)}
                 className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border cursor-pointer hover:bg-gray-50 transition"
               >
-                <h3 className="text-green-700 font-medium hover:underline">
+                <h3 className="text-green-500 font-medium hover:underline">
                   {job.Title}
                 </h3>
                 <p className="text-sm">{job.UserId?.Email}</p>

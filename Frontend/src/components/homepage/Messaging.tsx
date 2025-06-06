@@ -217,7 +217,7 @@ const Messaging = ({ userId }: { userId: string }) => {
 
       {/* Chat Window */}
       {conversation && (
-        <div className="flex flex-col h-[400px] border border-gray-300 rounded-md p-4">
+        <div className="flex flex-col h-[400px] border border-gray-300 rounded-md p-3">
           <h3 className="text-xl font-medium mb-2">Conversation</h3>
           <div className="flex-grow overflow-y-auto mb-4 space-y-2">
             {messages.map((msg) => (
@@ -230,7 +230,7 @@ const Messaging = ({ userId }: { userId: string }) => {
                 <div
                   className={`px-4 py-2 rounded-2xl break-words ${
                     msg.fromSelf
-                      ? "bg-green-200 text-gray-900"
+                      ? "bg-green-200 text-gray-900 text-right"
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >

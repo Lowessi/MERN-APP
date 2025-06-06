@@ -16,7 +16,7 @@ const RegisterLayout = () => {
   }, [user, navigate]);
 
   return (
-    <div className=" flex flex-col justify-between  bg-[#f3f4f6]">
+    <div className=" flex flex-col justify-between  bg-green-500">
       <Nav />
       <div>
         <Outlet />

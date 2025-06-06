@@ -26,18 +26,17 @@ const Contact = () => {
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10 text-center text-gray-800">
           <div>
             <h4 className="text-xl font-bold mb-2 text-black">Address</h4>
-            <p>Studio HQ</p>
-            <p>123 Creative Street</p>
-            <p>Melbourne, VIC 3000</p>
+            <p> Ormoc City</p>
+            <p>Brgy. Cogon</p>
           </div>
           <div>
             <h4 className="text-xl font-bold mb-2 text-black">Phone</h4>
-            <p>+61 3 1234 5678</p>
+            <p>+639513641101</p>
             <p>Mon – Fri, 9am – 6pm</p>
           </div>
           <div>
             <h4 className="text-xl font-bold mb-2 text-black">Email</h4>
-            <p>hello@studiobrands.com</p>
+            <p>Lianbugta@gmail.com</p>
             <p>We reply within 24 hours</p>
           </div>
         </div>

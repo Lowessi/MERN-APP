@@ -1,31 +1,24 @@
 const team = [
   {
-    name: "Andrew O’Keeffe",
-    role: "Director and founding partner",
-    education: "Bachelor of Design (Graphic Design) (Honours), RMIT University",
-    bio: "Andrew has over 15 years experience in Australia and the UK. He has worked with a broad spectrum of clients, ranging from grass roots cultural and sustainability organisations to multi-national corporations.",
-    image: "https://via.placeholder.com/120x120?text=AO",
+    name: "Lian Emmanuel Villaluz Bugtai",
+    role: "Project Owner",
+    education: "Bachelor of science in Information Technology",
+    bio: "I still new to management but i can do my best to manage the team",
+    image: "20",
   },
   {
-    name: "Mark O’Keeffe",
-    role: "Director and founding partner",
-    education: "Bachelor of Design (Graphic Design), RMIT University",
-    bio: "Drawing on over 10 years industry experience, Mark sees every new project as an opportunity to raise the bar. Mark is also a passionate musician and design educator.",
-    image: "https://via.placeholder.com/120x120?text=MO",
+    name: "Louise Czar Awit",
+    role: "Lead Programmer",
+    education: "Bachelor of science in Information Technology",
+    bio: "I am still new but ill do my best to be your programmer",
+    image: "21",
   },
   {
-    name: "Eunice Yip",
-    role: "Visual communicator",
-    education: "Bachelor of Design (Communication Design), RMIT University",
-    bio: "Originally from South East Asia, Eunice brings a unique perspective. She loves kerning, layout design, and believes print will never die.",
-    image: "https://via.placeholder.com/120x120?text=EY",
-  },
-  {
-    name: "Zoe Jazz",
-    role: "Interactive Designer",
-    education: "Advanced Diploma of Screen and Media, RMIT University",
-    bio: "Zoe creates beautiful digital landscapes and enjoys leading frontend components from design to code.",
-    image: "https://via.placeholder.com/120x120?text=ZJ",
+    name: "Edwin Jade Suerto",
+    role: "Tester",
+    education: "Bachelor of science in Information Technology",
+    bio: "I am still new to testing but ill do my best to maintain your trust to me",
+    image: "23",
   },
 ];
 
@@ -33,35 +26,39 @@ const About = () => {
   return (
     <div>
       <section className="bg-green-600 text-white py-24 text-center">
-        <h3 className="text-xl font-semibold mb-2">Who we are</h3>
+        <h3 className="text-xl font-semibold mb-2">What We Do</h3>
         <h1 className="text-5xl font-bold">
-          Designers, thinkers & collaborators
+          Freelance designers, thinkers & collaborators
         </h1>
       </section>
-      <section className="bg-[#f3f4f6]  py-16 px-6">
+
+      <section className="bg-[#f3f4f6] py-16 px-6">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-black mb-6">
-            Led by brothers Andrew and Mark O’Keeffe, we are a boutique brand
-            communications agency where you get to deal directly with the
-            creatives.
+            We're a small team of freelance creatives led by Lian Emmanuel V.
+            Bugtai, Louise Czar Awit, and Edwin Jade Suerto, helping clients
+            bring their ideas to life with clarity, craft, and consistency —
+            without the overhead of a traditional agency.
           </h2>
           <div className="flex flex-col md:flex-row gap-10 text-left text-gray-700 text-lg">
             <p className="md:w-1/2">
-              We pride ourselves on our process, our craft and our attention to
-              detail. We also put a lot of time into nurturing our relations
-              with our clients. We believe in charm, good manners and
-              punctuality. And a healthy dose of humour – we take pride in our
-              work, but don’t take ourselves too seriously.
+              We value strong communication, thoughtful design, and reliable
+              delivery. As freelancers, we build close working relationships
+              with our clients and stay personally involved in every project. We
+              keep things light but focused — with a balance of professionalism
+              and personality.
             </p>
             <p className="md:w-1/2">
-              We’re agile, flexible, nimble, responsive and adaptive. There’s no
-              agency hierarchy to trip over, no juniors making decisions about
-              your brand or learning on your time – just a dedicated group of
-              people who are all across, and focused on, your project.
+              You’ll work directly with experienced designers, not filtered
+              through layers of management. Our process is nimble and adaptive,
+              tailored to fit your goals and timeline — whether you need a full
+              brand identity, a sleek website, or just a fresh creative
+              perspective.
             </p>
           </div>
         </div>
       </section>
+
       <section className="bg-[#f3f4f6]  py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-10 text-center text-black">

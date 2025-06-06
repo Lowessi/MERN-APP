@@ -73,7 +73,7 @@ const FreelancerFeed = () => {
                 </h3>
                 <p className="text-sm text-gray-700">{user.Email}</p>
                 <p className="text-xs text-gray-500">
-                  {user.location || "No address provided"}
+                  {user.address || "No address provided"}
                 </p>
                 <p className="text-xs text-gray-500">
                   {user.title || "No title provided"}

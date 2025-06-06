@@ -1,5 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import Nav from "../navbars/Nav";
+import Footer from "../footer/Footer";
 
 const LoginLayout = () => {
   return (
@@ -8,6 +9,7 @@ const LoginLayout = () => {
       <div>
         <Outlet />
       </div>
+      <Footer></Footer>
     </div>
   );
 };

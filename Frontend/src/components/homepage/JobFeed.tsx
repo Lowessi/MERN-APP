@@ -14,7 +14,6 @@ const JobFeed = () => {
       navigate("/login");
       return;
     }
-
     fetchJobs();
   }, [token]);
 
@@ -32,9 +31,7 @@ const JobFeed = () => {
         },
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch jobs");
-      }
+      if (!res.ok) throw new Error("Failed to fetch jobs");
 
       const data: Job[] = await res.json();
       setJobs(data);
@@ -51,41 +48,61 @@ const JobFeed = () => {
 
   return (
     <div className="py-5">
-      <main className="w-full max-w-4xl mx-auto p-4 rounded-[15px] shadow-sm border bg-white border-gray-300">
-        <h2 className="text-xl font-semibold mb-4">Top job picks for you</h2>
+      <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-w-[350px]">
+        <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">
+          Top job picks for you
+        </h2>
 
         <input
           type="text"
           placeholder="Search for jobs..."
           value={searchQuery}
           onChange={handleSearchChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition"
         />
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {jobs.length === 0 ? (
-            <p>No jobs available.</p>
+            <p className="text-center text-gray-500 col-span-full">
+              No jobs available.
+            </p>
           ) : (
             jobs.map((job) => (
               <div
                 key={job._id}
                 onClick={() => navigate(`/job-preview/${job._id}`)}
-                className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border cursor-pointer hover:bg-gray-50 transition"
+                className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition cursor-pointer border border-gray-200 flex flex-col"
               >
-                <h3 className="text-green-700 font-medium hover:underline">
+                {/* Placeholder image */}
+                <div className="h-28 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-gray-400 text-sm">
+                  Image
+                </div>
+
+                <h3 className="text-lg font-semibold text-green-600 hover:underline mb-1">
                   {job.Title}
                 </h3>
-                <p className="text-sm">{job.UserId?.Email}</p>
-                <p className="text-xs text-gray-500">{job.Description}</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Requirements: {job.Requirements}
+
+                <p className="text-sm text-gray-700 break-words mb-1">
+                  {job.UserId?.Email}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Budget: {job.Currency || "USD"} {job.Budget}
+
+                <p className="text-sm text-gray-500 mb-2 line-clamp-3">
+                  {job.Description}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Deadline: {new Date(job.Deadline).toLocaleDateString()}
-                </p>
+
+                <div className="mt-auto text-sm text-gray-600 space-y-1">
+                  <p>
+                    <strong>Requirements:</strong> {job.Requirements}
+                  </p>
+                  <p>
+                    <strong>Budget:</strong> {job.Currency || "USD"}{" "}
+                    {job.Budget}
+                  </p>
+                  <p>
+                    <strong>Deadline:</strong>{" "}
+                    {new Date(job.Deadline).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             ))
           )}

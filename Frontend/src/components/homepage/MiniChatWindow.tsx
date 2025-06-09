@@ -45,6 +45,13 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
     };
   }, [conversation._id, currentUserId]);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const handleSend = () => {
     if (!input.trim()) return;
 
@@ -61,14 +68,19 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
 
     setMessages((prev) => [
       ...prev,
-      { ...message, fromSelf: true, createdAt: new Date().toISOString() },
+      {
+        ...message,
+        fromSelf: true,
+        createdAt: new Date().toISOString(),
+        _id: `temp-${Date.now()}`,
+      },
     ]);
     setInput("");
   };
 
   return (
-    <div className="w-100 h-100 bg-white rounded-lg shadow-md border right-5 flex flex-col relative">
-      <div className="bg-blue-600 text-white px-3 py-2 rounded-t-lg flex justify-between items-center text-sm">
+    <div className="w-80 h-100 bg-white rounded-lg shadow-md border right-5 flex flex-col relative">
+      <div className="bg-green-600 text-white px-3 py-2 rounded-t-lg flex justify-between items-center text-sm">
         <span>Chat</span>
         <button onClick={onClose} className="text-white hover:text-red-200">
           ✕
@@ -81,14 +93,14 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
       >
         {messages.map((msg) => (
           <div
-            key={msg._id || Math.random()}
+            key={msg._id}
             className={`flex flex-col ${
               msg.fromSelf ? "items-end" : "items-start"
             }`}
           >
             <div
               className={`px-3 py-1 rounded-lg max-w-[80%] ${
-                msg.fromSelf ? "bg-blue-100" : "bg-gray-200"
+                msg.fromSelf ? "bg-green-100" : "bg-gray-200"
               }`}
             >
               {msg.text}
@@ -113,7 +125,7 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
         />
         <button
           onClick={handleSend}
-          className="bg-blue-500 text-white px-2 py-1 rounded"
+          className="bg-green-500 text-white px-2 py-1 rounded"
         >
           Send
         </button>

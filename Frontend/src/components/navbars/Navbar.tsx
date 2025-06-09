@@ -12,38 +12,38 @@ const Navbar = () => {
       <nav className="flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo */}
         <div className="text-2xl font-semibold text-green-700">
-          <Link to="/">Pablo Job</Link>
+          <Link to="/">Talent</Link>
         </div>
 
         {/* Desktop Links */}
         <div className="hidden md:flex gap-10 font-semibold items-center">
           <Link
             to="/"
-            className="text-[#597445]  hover:text-black hover:underline"
+            className="text-green-600  hover:text-black hover:underline"
           >
             Home
           </Link>
           <Link
             to="/login"
-            className="text-[#597445]  hover:text-black hover:underline"
+            className="text-green-600 hover:text-black hover:underline"
           >
             Jobs
           </Link>
           <Link
             to="/login"
-            className="text-[#597445]  hover:text-black hover:underline"
+            className="text-green-600 hover:text-black hover:underline"
           >
             Post a Job
           </Link>
           <Link
             to="/contact"
-            className="text-[#597445] hover:text-black hover:underline"
+            className="text-green-600 hover:text-black hover:underline"
           >
             Contact
           </Link>
           <Link
             to="/about"
-            className="text-[#597445]  hover:text-black hover:underline"
+            className="text-green-600  hover:text-black hover:underline"
           >
             About us
           </Link>

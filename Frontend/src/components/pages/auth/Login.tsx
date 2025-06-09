@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../context/AuthContext";
 import { getProfile } from "../../../api/Profile";
+import freelanceBg from "../../../Image/Freelance.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser, setToken } = useContext(AuthContext) || {};
+  const auth = useContext(AuthContext);
+  const setUser = auth?.setUser;
+  const setToken = auth?.setToken;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,25 +17,19 @@ const Login = () => {
   const fetchProfile = async (data: any) => {
     try {
       const profile = await getProfile(data.user.id, data.token);
-      console.log("Fetched profile:", profile);
-
       if (profile) {
         navigate("/home");
       } else {
         navigate("/edit-profile");
       }
     } catch (error: any) {
-      console.error("Error fetching profile in Home.tsx:", error.message);
-      navigate("/edit-profile"); // Redirect to edit profile page
+      console.error("Error fetching profile:", error.message);
+      navigate("/edit-profile");
     }
-
-    // console.log("FUCK");
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log("submit");
 
     if (!setUser || !setToken) {
       console.error("AuthContext is not available.");
@@ -42,13 +39,8 @@ const Login = () => {
     try {
       const res = await fetch("http://localhost:5000/api/userauth/signin", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Email: email,
-          Password: password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Email: email, Password: password }),
       });
 
       const data = await res.json();
@@ -58,14 +50,13 @@ const Login = () => {
         return;
       }
 
-      // Save to localStorage and context
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
 
       setUser(data.user);
       setToken(data.token);
 
-      await fetchProfile(data); // Ensure navigation occurs after this completes
+      await fetchProfile(data);
       toast.success("Login successful!");
     } catch (error) {
       console.error("Login error:", error);
@@ -74,58 +65,68 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#f3f4f6] h-full flex justify-center items-center">
-      <form
-        onSubmit={onSubmit}
-        className="shadow-md flex flex-col gap-5 p-8 rounded-lg bg-white w-full max-w-md"
-      >
-        <h1 className="text-3xl font-semibold text-green-600 text-center">
-          Sign In
-        </h1>
+    <div className="flex min-h-screen">
+      {/* LEFT: Image */}
+      <div className="w-1/2 hidden md:block">
+        <img
+          src={freelanceBg}
+          alt="Freelance"
+          className="object-cover w-full h-full scale-75"
+        />
+      </div>
 
-        <label htmlFor="email" className="flex flex-col w-full">
-          Email
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border h-12 p-3 rounded-lg mt-2 border-gray-300 focus:ring-2 focus:ring-green-500"
-          />
-        </label>
-
-        <label htmlFor="password" className="flex flex-col w-full">
-          Password
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border h-12 p-3 rounded-lg mt-2 border-gray-300 focus:ring-2 focus:ring-green-500"
-          />
-        </label>
-
-        <div className="text-sm text-center mt-2 text-gray-600">
-          Don't have an account?{" "}
-          <span
-            onClick={() => navigate("/register")}
-            className="text-green-600 cursor-pointer hover:underline"
-          >
-            Sign Up
-          </span>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full p-3 rounded-lg bg-orange-600 text-white hover:bg-green-700 transition"
+      {/* RIGHT: Login Form */}
+      <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-100 p-8">
+        <form
+          onSubmit={onSubmit}
+          className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg"
         >
-          Sign In
-        </button>
-      </form>
+          <h1 className="text-3xl font-semibold text-green-600 text-center mb-6">
+            Sign In
+          </h1>
+
+          <label htmlFor="email" className="block mb-4">
+            <span className="block mb-1">Email</span>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+          </label>
+
+          <label htmlFor="password" className="block mb-6">
+            <span className="block mb-1">Password</span>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-green-500"
+            />
+          </label>
+
+          <div className="text-sm text-center mb-4 text-gray-600">
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="text-green-600 cursor-pointer hover:underline"
+            >
+              Sign Up
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            Sign In
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

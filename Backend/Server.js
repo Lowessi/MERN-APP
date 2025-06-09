@@ -11,6 +11,7 @@ const JobRoutes = require("./Routes/JobRoutes");
 const ProfileRoutes = require("./Routes/ProfileRoutes");
 const MessageRoutes = require("./Routes/MessageRoutes");
 const NotificationRoutes = require("./Routes/NotificationRoutes");
+const ApplicationRoutes = require("./Routes/ApplicationRoutes");
 
 // Import models
 const MessageModel = require("./Models/MessageModel");
@@ -47,6 +48,7 @@ app.use("/api/jobs", JobRoutes);
 app.use("/api/profile", ProfileRoutes);
 app.use("/api/chat", MessageRoutes);
 app.use("/api/notifications", NotificationRoutes);
+app.use("/api/applications", ApplicationRoutes);
 
 // ==================== SOCKET.IO ====================
 

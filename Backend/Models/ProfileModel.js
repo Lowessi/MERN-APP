@@ -21,11 +21,13 @@ const ProfileSchema = new mongoose.Schema(
     title: { type: String, required: true },
     skills: { type: [String], required: true },
     workExperience: { type: [WorkExperienceSchema], default: [] },
+
+    // New photo URL field
+    profilePhoto: { type: String, default: "" },
   },
   { timestamps: true }
 );
 
-// Static method to create or update profile
 ProfileSchema.statics.UpsertProfile = async function (userId, data) {
   const updated = await this.findOneAndUpdate(
     { userId },
@@ -35,6 +37,5 @@ ProfileSchema.statics.UpsertProfile = async function (userId, data) {
   return updated;
 };
 
-// Use mongoose.models to avoid re-compiling the model
 module.exports =
   mongoose.models.ProfileModel || mongoose.model("ProfileModel", ProfileSchema);

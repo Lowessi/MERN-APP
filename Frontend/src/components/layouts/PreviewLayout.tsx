@@ -4,7 +4,7 @@ import Footer from "../footer/Footer";
 
 const PreviewLayout = () => {
   return (
-    <div>
+    <div className="h-screen flex flex-col justify-between  bg-[#f3f4f6]">
       <div>
         <HomeNavbar></HomeNavbar>
         <Outlet />

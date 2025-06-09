@@ -67,7 +67,7 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
   };
 
   return (
-    <div className="w-80 h-100 bg-white rounded-lg shadow-md border right-5 flex flex-col relative">
+    <div className="w-100 h-100 bg-white rounded-lg shadow-md border right-5 flex flex-col relative">
       <div className="bg-blue-600 text-white px-3 py-2 rounded-t-lg flex justify-between items-center text-sm">
         <span>Chat</span>
         <button onClick={onClose} className="text-white hover:text-red-200">

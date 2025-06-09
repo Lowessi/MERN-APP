@@ -81,7 +81,7 @@ const JobFeed = () => {
                   Requirements: {job.Requirements}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
-                  Budget: ${job.Budget}
+                  Budget: {job.Currency || "USD"} {job.Budget}
                 </p>
                 <p className="text-xs text-gray-400 mt-1">
                   Deadline: {new Date(job.Deadline).toLocaleDateString()}

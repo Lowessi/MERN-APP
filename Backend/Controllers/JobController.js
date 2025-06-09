@@ -3,8 +3,16 @@ const JobModel = require("../Models/JobModel");
 
 const postJob = async (req, res) => {
   try {
-    const { Title, Description, Requirements, Budget, Deadline } = req.body;
+    const { Title, Description, Requirements, Budget, Deadline, Currency } =
+      req.body;
     const userId = req.user._id;
+
+    // Validate Currency
+    if (!["USD", "PHP"].includes(Currency)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid currency. Must be USD or PHP." });
+    }
 
     const job = await JobModel.JobPost(
       userId,
@@ -12,7 +20,8 @@ const postJob = async (req, res) => {
       Description,
       Requirements,
       Budget,
-      Deadline
+      Deadline,
+      Currency
     );
 
     res.status(201).json(job);
@@ -90,6 +99,13 @@ const updateJob = async (req, res) => {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "Invalid Job ID" });
+    }
+
+    // Optional: validate currency if it's included in update
+    if (req.body.Currency && !["USD", "PHP"].includes(req.body.Currency)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid currency. Must be USD or PHP." });
     }
 
     const updatedJob = await JobModel.findOneAndUpdate(

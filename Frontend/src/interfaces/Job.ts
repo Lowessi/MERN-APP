@@ -4,6 +4,7 @@ export interface Job {
   Description: string;
   Requirements: string;
   Budget: number;
+  Currency: string;
   Deadline: string;
   UserId: {
     _id: string;

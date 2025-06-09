@@ -85,6 +85,7 @@ const searchUsers = async (req, res) => {
           Email: user.Email,
           name: profile?.name || null,
           address: profile?.location || null,
+          title: profile?.title || null,
         };
       })
     );

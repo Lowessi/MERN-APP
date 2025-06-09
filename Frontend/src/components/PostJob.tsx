@@ -1,4 +1,3 @@
-// components/PostJob.tsx
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -9,6 +8,7 @@ interface JobFormData {
   Requirements: string;
   Budget: number;
   Deadline: string;
+  Currency: string; // new field
 }
 
 const PostJob = () => {
@@ -18,6 +18,7 @@ const PostJob = () => {
     Requirements: "",
     Budget: 0,
     Deadline: "",
+    Currency: "USD",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,6 +39,7 @@ const PostJob = () => {
       newErrors.Description = "Description is required";
     if (!formData.Budget) newErrors.Budget = "Budget is required";
     if (!formData.Deadline) newErrors.Deadline = "Deadline is required";
+    if (!formData.Currency) newErrors.Currency = "Currency is required";
     if (formData.Description.length > 2000)
       newErrors.Description = "Description exceeds 2000 characters";
     if (formData.Requirements.length > 1000)
@@ -46,7 +48,9 @@ const PostJob = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
@@ -84,6 +88,7 @@ const PostJob = () => {
         Requirements: "",
         Budget: 0,
         Deadline: "",
+        Currency: "USD",
       });
     } catch (err: any) {
       setErrors({ general: err.message });
@@ -140,6 +145,21 @@ const PostJob = () => {
         />
         {errors.Budget && (
           <p className="text-red-500 text-sm">{errors.Budget}</p>
+        )}
+
+        <select
+          name="Currency"
+          value={formData.Currency}
+          onChange={handleChange}
+          className="w-full border p-2 rounded"
+        >
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="INR">INR (₹)</option>
+        </select>
+        {errors.Currency && (
+          <p className="text-red-500 text-sm">{errors.Currency}</p>
         )}
 
         <input

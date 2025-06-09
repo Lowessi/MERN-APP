@@ -65,6 +65,14 @@ const EditJob = () => {
 
   return (
     <div className="p-4 max-w-xl mx-auto">
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-4 px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+      >
+        &larr; Back
+      </button>
+
       <h2 className="text-2xl font-bold mb-4">Edit Job</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

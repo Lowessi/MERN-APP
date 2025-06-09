@@ -34,10 +34,10 @@ const HomeNavbar = () => {
   const [initial, setInitial] = useState<string>("?");
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
+  // const [unreadCount, setUnreadCount] = useState<number>(0);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
+  // const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const socket = useRef<Socket | null>(null);
@@ -57,20 +57,20 @@ const HomeNavbar = () => {
   }, [email]);
 
   // Fetch Notifications
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!userId) return;
-      try {
-        const res = await fetch(`/api/notifications/${userId}`);
-        const data = await res.json();
-        setNotifications(data);
-        setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
-      } catch (err) {
-        console.error("Failed to load notifications:", err);
-      }
-    };
-    fetchNotifications();
-  }, [userId]);
+  //  useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     if (!userId) return;
+  //     try {
+  //       const res = await fetch(`/api/notifications/${userId}`);
+  //       const data = await res.json();
+  //       setNotifications(data);
+  //       setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
+  //     } catch (err) {
+  //       console.error("Failed to load notifications:", err);
+  //     }
+  //   };
+  //   fetchNotifications();
+  // }, [userId]);
 
   // Fetch Recent Conversations
   const fetchConversations = async () => {
@@ -95,14 +95,14 @@ const HomeNavbar = () => {
       "receiveNotification",
       (newNotification: Notification) => {
         setNotifications((prev) => [newNotification, ...prev]);
-        setUnreadCount((prev) => prev + 1);
+        // setUnreadCount((prev) => prev + 1);
       }
     );
 
     // Listen for new messages
     socket.current.on("getMessage", (message: Message) => {
       if (message.receiverId === userId) {
-        setHasNewMessage(true);
+        // setHasNewMessage(true);
         fetchConversations(); // Refresh latest convos
       }
     });
@@ -125,25 +125,25 @@ const HomeNavbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleNotificationClick = async () => {
-    setDropdownOpen(!dropdownOpen);
-    if (unreadCount > 0) {
-      try {
-        await fetch(`/api/notifications/mark-read/${userId}`, {
-          method: "PUT",
-        });
-        setUnreadCount(0);
-        setNotifications((prev) =>
-          prev.map((notif) => ({ ...notif, isRead: true }))
-        );
-      } catch (err) {
-        console.error("Failed to mark notifications as read:", err);
-      }
-    }
-    if (hasNewMessage) {
-      setHasNewMessage(false);
-    }
-  };
+  // const handleNotificationClick = async () => {
+  //   setDropdownOpen(!dropdownOpen);
+  //   if (unreadCount > 0) {
+  //     try {
+  //       await fetch(`/api/notifications/mark-read/${userId}`, {
+  //         method: "PUT",
+  //       });
+  //       setUnreadCount(0);
+  //       setNotifications((prev) =>
+  //         prev.map((notif) => ({ ...notif, isRead: true }))
+  //       );
+  //     } catch (err) {
+  //       console.error("Failed to mark notifications as read:", err);
+  //     }
+  //   }
+  //   if (hasNewMessage) {
+  //     setHasNewMessage(false);
+  //   }
+  // };
 
   const handleSignOut = () => {
     signOut?.();
@@ -166,7 +166,7 @@ const HomeNavbar = () => {
             Freelancer
           </Link>
 
-          <div
+          {/* <div
             className="relative cursor-pointer"
             onClick={handleNotificationClick}
           >
@@ -176,7 +176,7 @@ const HomeNavbar = () => {
                 ●
               </span>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Right: Avatar */}

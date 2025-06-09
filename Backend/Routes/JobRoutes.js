@@ -1,4 +1,3 @@
-// routes/JobRoutes.js
 const express = require("express");
 const requireAuth = require("../middleware/ReqAuth");
 const {
@@ -16,10 +15,11 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.post("/jobpost", postJob);
-router.get("/my", getMyJobs); // <-- moved up
-router.get("/search", searchJobs); // <-- search before :id too
+router.get("/my", getMyJobs);
+router.get("/search", searchJobs);
 router.get("/", getAllJobs);
 router.get("/:id", getJobById);
 router.delete("/:id", deleteJob);
 router.put("/:id", updateJob);
+
 module.exports = router;

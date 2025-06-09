@@ -45,6 +45,13 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
     };
   }, [conversation._id, currentUserId]);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const handleSend = () => {
     if (!input.trim()) return;
 
@@ -61,7 +68,12 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
 
     setMessages((prev) => [
       ...prev,
-      { ...message, fromSelf: true, createdAt: new Date().toISOString() },
+      {
+        ...message,
+        fromSelf: true,
+        createdAt: new Date().toISOString(),
+        _id: `temp-${Date.now()}`,
+      },
     ]);
     setInput("");
   };
@@ -81,7 +93,7 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
       >
         {messages.map((msg) => (
           <div
-            key={msg._id || Math.random()}
+            key={msg._id}
             className={`flex flex-col ${
               msg.fromSelf ? "items-end" : "items-start"
             }`}

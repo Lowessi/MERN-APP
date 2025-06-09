@@ -1,4 +1,3 @@
-// components/PostJob.tsx
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -9,6 +8,7 @@ interface JobFormData {
   Requirements: string;
   Budget: number;
   Deadline: string;
+  Currency: string;
 }
 
 const PostJob = () => {
@@ -18,6 +18,7 @@ const PostJob = () => {
     Requirements: "",
     Budget: 0,
     Deadline: "",
+    Currency: "USD",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,6 +39,7 @@ const PostJob = () => {
       newErrors.Description = "Description is required";
     if (!formData.Budget) newErrors.Budget = "Budget is required";
     if (!formData.Deadline) newErrors.Deadline = "Deadline is required";
+    if (!formData.Currency) newErrors.Currency = "Currency is required";
     if (formData.Description.length > 2000)
       newErrors.Description = "Description exceeds 2000 characters";
     if (formData.Requirements.length > 1000)
@@ -46,7 +48,9 @@ const PostJob = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
@@ -84,6 +88,7 @@ const PostJob = () => {
         Requirements: "",
         Budget: 0,
         Deadline: "",
+        Currency: "USD",
       });
     } catch (err: any) {
       setErrors({ general: err.message });
@@ -91,12 +96,23 @@ const PostJob = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
-      <h2 className="text-xl font-bold mb-4">Post a Job</h2>
+    <div className="relative max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
+      {/* Back button */}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="absolute top-4 right-4 text-sm text-gray-600 border border-gray-300 px-3 py-1 rounded hover:bg-gray-100 transition"
+      >
+        Back
+      </button>
+
+      <h2 className="text-xl font-bold mb-4 text-center">Post a Job</h2>
+
       {errors.general && <p className="text-red-500 mb-2">{errors.general}</p>}
       {successMessage && (
         <p className="text-green-600 mb-2">{successMessage}</p>
       )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -142,6 +158,21 @@ const PostJob = () => {
           <p className="text-red-500 text-sm">{errors.Budget}</p>
         )}
 
+        <select
+          name="Currency"
+          value={formData.Currency}
+          onChange={handleChange}
+          className="w-full border p-2 rounded"
+        >
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="PHP">PHP (₱)</option>
+        </select>
+        {errors.Currency && (
+          <p className="text-red-500 text-sm">{errors.Currency}</p>
+        )}
+
         <input
           type="date"
           name="Deadline"
@@ -155,7 +186,7 @@ const PostJob = () => {
 
         <button
           type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
         >
           Post Job
         </button>

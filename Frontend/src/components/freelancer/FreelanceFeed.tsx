@@ -47,35 +47,49 @@ const FreelancerFeed = () => {
 
   return (
     <div className="py-5">
-      <main className="w-full max-w-4xl mx-auto p-4 rounded-[15px] shadow-sm border bg-white border-gray-300">
-        <h2 className="text-xl font-semibold mb-4">Explore top freelancers</h2>
+      <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-w-[350px]">
+        <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">
+          Explore top freelancers
+        </h2>
 
         <input
           type="text"
           placeholder="Search by name or email..."
           value={searchQuery}
           onChange={handleSearchChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition"
         />
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {freelancers.length === 0 ? (
-            <p>No freelancers found.</p>
+            <p className="text-center text-gray-500 col-span-full">
+              No freelancers found.
+            </p>
           ) : (
             freelancers.map((user) => (
               <div
                 key={user._id}
-                onClick={() => navigate(`/profile-preview/${user._id}`)} // Navigate to profile preview on click
-                className="bg-white w-2xl p-4 rounded shadow-sm border-gray-300 border cursor-pointer hover:shadow-md transition"
+                onClick={() => navigate(`/profile-preview/${user._id}`)}
+                className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition cursor-pointer border border-gray-200 flex flex-col items-center text-center min-h-[300px]"
               >
-                <h3 className="text-green-500 font-medium">
+                {/* Avatar or placeholder */}
+                <div className="h-24 w-24 sm:h-28 sm:w-28 bg-gray-100 rounded-full mb-4 flex items-center justify-center text-sm text-gray-400">
+                  Avatar
+                </div>
+
+                <h3 className="text-lg font-semibold text-green-600 hover:underline mb-1">
                   {user.name || "Unnamed Freelancer"}
                 </h3>
-                <p className="text-sm text-gray-700">{user.Email}</p>
-                <p className="text-xs text-gray-500">
+
+                <p className="text-sm text-gray-700 break-words mb-1">
+                  {user.Email}
+                </p>
+
+                <p className="text-sm text-gray-500">
                   {user.address || "No address provided"}
                 </p>
-                <p className="text-xs text-gray-500">
+
+                <p className="text-sm text-gray-500 mt-1">
                   {user.title || "No title provided"}
                 </p>
               </div>

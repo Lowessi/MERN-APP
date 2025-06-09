@@ -1,4 +1,3 @@
-// models/JobModel.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -26,6 +25,12 @@ const JobSchema = new Schema(
       type: Number,
       required: true,
     },
+    Currency: {
+      type: String,
+      enum: ["USD", "PHP"],
+      required: true,
+      default: "USD",
+    },
     Deadline: {
       type: Date,
       required: true,
@@ -41,7 +46,8 @@ JobSchema.statics.JobPost = async function (
   description,
   requirements,
   budget,
-  deadline
+  deadline,
+  currency
 ) {
   const job = new this({
     UserId: userId,
@@ -50,6 +56,7 @@ JobSchema.statics.JobPost = async function (
     Requirements: requirements,
     Budget: budget,
     Deadline: deadline,
+    Currency: currency,
   });
   await job.save();
   return job;

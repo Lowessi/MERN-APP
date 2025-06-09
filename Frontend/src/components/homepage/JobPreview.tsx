@@ -59,7 +59,7 @@ const JobPreview = () => {
           Authorization: `Bearer ${token}`, // added auth header here
         },
         body: JSON.stringify({
-          senderId: authUser._id, // ensure _id used here
+          senderId: authUser.id, // ensure _id used here
           receiverId: job.UserId._id,
         }),
       });
@@ -163,9 +163,9 @@ const JobPreview = () => {
               </button>
 
               <button
-                disabled={!authUser}
+                disabled={!authUser || authUser.id === job.UserId?._id}
                 className={`px-4 py-2 rounded transition ${
-                  !authUser
+                  !authUser || authUser.id === job.UserId?._id
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-green-600 text-white hover:bg-green-700"
                 }`}
@@ -185,7 +185,7 @@ const JobPreview = () => {
           <div className="fixed bottom-4 right-4 z-50">
             <MiniChatWindow
               conversation={chatConversation}
-              currentUserId={authUser._id}
+              currentUserId={authUser.id}
               onClose={() => setChatOpen(false)}
             />
           </div>

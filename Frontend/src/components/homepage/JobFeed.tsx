@@ -34,7 +34,9 @@ const JobFeed = () => {
       if (!res.ok) throw new Error("Failed to fetch jobs");
 
       const data: Job[] = await res.json();
-      setJobs(data);
+
+      // Only show "Open" jobs
+      setJobs(data.filter((job) => job.status === "Open"));
     } catch (error) {
       console.error("Error fetching jobs:", error);
     }
@@ -78,9 +80,23 @@ const JobFeed = () => {
                   Image
                 </div>
 
-                <h3 className="text-lg font-semibold text-green-600 hover:underline mb-1">
-                  {job.Title}
-                </h3>
+                {/* Title + Status badge */}
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-green-600 hover:underline">
+                    {job.Title}
+                  </h3>
+                  <span
+                    className={`text-xs font-semibold px-2 py-1 rounded ${
+                      job.status === "Open"
+                        ? "bg-green-100 text-green-700"
+                        : job.status === "On Work"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {job.status}
+                  </span>
+                </div>
 
                 <p className="text-sm text-gray-700 break-words mb-1">
                   {job.UserId?.Email}

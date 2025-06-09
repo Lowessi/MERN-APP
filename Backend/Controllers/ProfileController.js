@@ -1,5 +1,5 @@
 // profileController.js
-const ProfileModel = require("../models/ProfileModel");
+const ProfileModel = require("../Models/ProfileModel");
 
 const upsertProfile = async (req, res) => {
   const userId = req.user._id;

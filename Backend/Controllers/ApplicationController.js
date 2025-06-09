@@ -1,5 +1,4 @@
 const ApplicationModel = require("../Models/ApplicationModel");
-const JobModel = require("../Models/JobModel");
 const mongoose = require("mongoose");
 
 // Apply to a job

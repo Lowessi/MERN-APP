@@ -9,6 +9,7 @@ type JobType = {
   Budget: number;
   Deadline: string;
   createdAt: string;
+  status: "Open" | "On Work" | "Completed";
 };
 
 const MyJobs = () => {
@@ -44,6 +45,31 @@ const MyJobs = () => {
       setJobs((prev) => prev.filter((job) => job._id !== id));
     } catch (err) {
       alert("Error deleting job");
+    }
+  };
+
+  const handleStatusChange = async (jobId: string, newStatus: string) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/jobs/${jobId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update job status");
+
+      const updatedJob = await res.json();
+
+      setJobs((prev) =>
+        prev.map((job) =>
+          job._id === jobId ? { ...job, status: updatedJob.status } : job
+        )
+      );
+    } catch (err) {
+      alert("Error updating job status");
     }
   };
 
@@ -88,6 +114,20 @@ const MyJobs = () => {
                   </p>
                   <p className="text-sm text-gray-700 mb-4">
                     Deadline: {new Date(job.Deadline).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm text-gray-700 mb-2">
+                    Status:{" "}
+                    <select
+                      value={job.status}
+                      onChange={(e) =>
+                        handleStatusChange(job._id, e.target.value)
+                      }
+                      className="border rounded px-2 py-1 ml-2"
+                    >
+                      <option value="Open">Open</option>
+                      <option value="On Work">On Work</option>
+                      <option value="Completed">Completed</option>
+                    </select>
                   </p>
                 </div>
                 <div className="flex justify-between">

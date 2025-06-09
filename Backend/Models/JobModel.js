@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ApplicationModel = require("./ApplicationModel");
 const Schema = mongoose.Schema;
 
 const JobSchema = new Schema(
@@ -35,10 +36,10 @@ const JobSchema = new Schema(
       type: Date,
       required: true,
     },
-
-    ApplicationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ApplicationModel",
+    status: {
+      type: String,
+      enum: ["Open", "On Work", "Completed"],
+      default: "Open",
     },
   },
   { timestamps: true }
@@ -62,6 +63,7 @@ JobSchema.statics.JobPost = async function (
     Budget: budget,
     Deadline: deadline,
     Currency: currency,
+    status: "Open", // Initial status
   });
   await job.save();
   return job;

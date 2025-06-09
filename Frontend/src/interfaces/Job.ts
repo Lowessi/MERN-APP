@@ -1,17 +1,16 @@
 export interface Job {
   _id: string;
+  id: string; // <-- Add id here
   Title: string;
   Description: string;
   Requirements?: string;
   Budget: number;
-<<<<<<< HEAD
-  Currency: string;
-=======
   Currency: string; // <-- Add Currency here
->>>>>>> f29c7156ce917162de4ac27e468a56a73ca6e7da
   Deadline: string;
   createdAt?: string;
+  status?: "Open" | "On Work" | "Completed";
   UserId?: {
+    _id: string;
     Email?: string;
   };
 }

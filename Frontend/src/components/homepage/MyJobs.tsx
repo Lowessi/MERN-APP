@@ -12,12 +12,24 @@ type JobType = {
   status: "Open" | "On Work" | "Completed";
 };
 
+type ApplicantType = {
+  _id: string;
+  userId: { Email: string };
+  proposal: string;
+};
+
 const MyJobs = () => {
   const { token } = useContext(AuthContext) || {};
   const [jobs, setJobs] = useState<JobType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [applicants, setApplicants] = useState<ApplicantType[]>([]);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) fetchMyJobs();
+  }, [token]);
 
   const fetchMyJobs = async () => {
     try {
@@ -73,9 +85,45 @@ const MyJobs = () => {
     }
   };
 
-  useEffect(() => {
-    if (token) fetchMyJobs();
-  }, [token]);
+  // Fetch applicants for a specific job
+  const fetchApplicants = async (jobId: string) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/applications/job/${jobId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch applicants");
+      const data = await res.json();
+      setApplicants(data);
+      setSelectedJobId(jobId);
+    } catch (err) {
+      alert("Error fetching applicants");
+    }
+  };
+
+  // Accept or reject an applicant
+  const handleApplicantAction = async (
+    applicantId: string,
+    action: "accept" | "reject"
+  ) => {
+    try {
+      await fetch(
+        `http://localhost:5000/api/applicants/${applicantId}/${action}`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setApplicants((prev) =>
+        prev.filter((applicant) => applicant._id !== applicantId)
+      );
+    } catch (err) {
+      alert(`Error ${action}ing applicant`);
+    }
+  };
 
   if (loading) return <div className="p-6">Loading your jobs...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
@@ -131,7 +179,7 @@ const MyJobs = () => {
                   </p>
                 </div>
                 <div className="flex justify-between">
-                  <div className="mt-auto  space-x-2">
+                  <div className="mt-auto space-x-2">
                     <button
                       onClick={() => navigate(`/edit-jobs/${job._id}`)}
                       className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
@@ -145,7 +193,10 @@ const MyJobs = () => {
                       Delete
                     </button>
                   </div>
-                  <button className="rounded text-white bg-green-600 shadow px-3 py-1">
+                  <button
+                    onClick={() => fetchApplicants(job._id)}
+                    className="rounded text-white bg-green-600 shadow px-3 py-1"
+                  >
                     Applicants
                   </button>
                 </div>
@@ -154,6 +205,50 @@ const MyJobs = () => {
           </div>
         )}
       </div>
+
+      {selectedJobId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Applicants</h2>
+            {applicants.length === 0 ? (
+              <p>No applicants yet.</p>
+            ) : (
+              applicants.map((applicant) => (
+                <div key={applicant._id} className="border p-4 mb-2">
+                  <p>
+                    <strong>Email:</strong> {applicant.userId.Email}
+                  </p>
+                  <p>
+                    <strong>Proposal:</strong> {applicant.proposal}
+                  </p>
+                  <button
+                    onClick={() =>
+                      handleApplicantAction(applicant._id, "accept")
+                    }
+                    className="mr-2 px-3 py-1 bg-blue-500 text-white rounded"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleApplicantAction(applicant._id, "reject")
+                    }
+                    className="px-3 py-1 bg-red-500 text-white rounded"
+                  >
+                    Reject
+                  </button>
+                </div>
+              ))
+            )}
+            <button
+              onClick={() => setSelectedJobId(null)}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded w-full"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

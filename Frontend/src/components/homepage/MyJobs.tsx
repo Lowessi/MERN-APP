@@ -107,24 +107,26 @@ const MyJobs = () => {
   // Accept or reject an applicant
   const handleApplicantAction = async (
     applicantId: string,
-    action: "accept" | "reject"
+    action: "reject"
   ) => {
     try {
-      await fetch(
-        `http://localhost:5000/api/applicants/${applicantId}/${action}`,
+      if (action !== "reject") return; // Guard clause for invalid action
+
+      const res = await fetch(
+        `http://localhost:5000/api/applications/${applicantId}/reject`,
         {
-          method: "PUT",
+          method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setApplicants((prev) =>
-        prev.filter((applicant) => applicant._id !== applicantId)
-      );
+
+      if (!res.ok) throw new Error("Failed to reject applicant");
+
+      setApplicants((prev) => prev.filter((app) => app._id !== applicantId));
     } catch (err) {
-      alert(`Error ${action}ing applicant`);
+      alert("Error rejecting applicant");
     }
   };
-
   if (loading) return <div className="p-6">Loading your jobs...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
 
@@ -221,14 +223,7 @@ const MyJobs = () => {
                   <p>
                     <strong>Proposal:</strong> {applicant.proposal}
                   </p>
-                  <button
-                    onClick={() =>
-                      handleApplicantAction(applicant._id, "accept")
-                    }
-                    className="mr-2 px-3 py-1 bg-blue-500 text-white rounded"
-                  >
-                    Accept
-                  </button>
+
                   <button
                     onClick={() =>
                       handleApplicantAction(applicant._id, "reject")

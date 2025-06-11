@@ -4,6 +4,7 @@ const {
   applyToJob,
   getApplicationsByJobId,
   getMyApplications,
+  rejectApplication,
 } = require("../Controllers/ApplicationController");
 
 // Middleware: Require login/auth
@@ -20,4 +21,6 @@ router.get("/job/:jobId", getApplicationsByJobId);
 // GET: All applications made by the logged-in user
 router.get("/my", getMyApplications);
 
+// DELETE: Reject and remove an application
+router.delete("/:_id/reject", rejectApplication);
 module.exports = router;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 type ApplicantType = {
   _id: string;
@@ -8,26 +8,64 @@ type ApplicantType = {
 
 type ApplicantPopupProps = {
   applicants: ApplicantType[];
+  setApplicants: React.Dispatch<React.SetStateAction<ApplicantType[]>>;
   setSelectedJobId: (value: string | null) => void;
-  handleApplicantAction: (
-    applicantId: string,
-    action: "accept" | "reject"
-  ) => void;
 };
 
 const ApplicantPopup: React.FC<ApplicantPopupProps> = ({
   applicants,
+  setApplicants,
   setSelectedJobId,
-  handleApplicantAction,
 }) => {
+  const [updatedApplicants, setUpdatedApplicants] = useState<ApplicantType[]>(
+    []
+  );
+
+  useEffect(() => {
+    setUpdatedApplicants(applicants);
+  }, [applicants]);
+
+  const handleApplicantAction = async (_id: string) => {
+    try {
+      const method = "DELETE"; // Exclusively using DELETE for rejection
+      const API_BASE_URL =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+      console.log(
+        `Sending DELETE request to: ${API_BASE_URL}/api/applications/${_id}/reject`
+      );
+
+      const res = await fetch(
+        `${API_BASE_URL}/api/applications/${_id}/reject`,
+        {
+          method,
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      if (!res.ok) throw new Error(`Failed to reject applicant`);
+
+      // Ensure UI updates after rejection
+      setUpdatedApplicants((prev) =>
+        prev.filter((applicant) => applicant._id !== _id)
+      );
+      setApplicants((prev) =>
+        prev.filter((applicant) => applicant._id !== _id)
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error rejecting applicant");
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4">Applicants</h2>
-        {applicants.length === 0 ? (
+        {updatedApplicants.length === 0 ? (
           <p>No applicants yet.</p>
         ) : (
-          applicants.map((applicant) => (
+          updatedApplicants.map((applicant) => (
             <div key={applicant._id} className="border p-4 mb-2">
               <p>
                 <strong>Email:</strong> {applicant.userId.Email}
@@ -37,13 +75,7 @@ const ApplicantPopup: React.FC<ApplicantPopupProps> = ({
               </p>
               <div className="flex space-x-2 mt-2">
                 <button
-                  onClick={() => handleApplicantAction(applicant._id, "accept")}
-                  className="px-3 py-1 bg-blue-500 text-white rounded"
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={() => handleApplicantAction(applicant._id, "reject")}
+                  onClick={() => handleApplicantAction(applicant._id)}
                   className="px-3 py-1 bg-red-500 text-white rounded"
                 >
                   Reject

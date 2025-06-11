@@ -1,4 +1,5 @@
 const ApplicationModel = require("../Models/ApplicationModel");
+const JobModel = require("../Models/JobModel");
 const mongoose = require("mongoose");
 
 // Apply to a job
@@ -11,6 +12,11 @@ const applyToJob = async (req, res) => {
       return res
         .status(400)
         .json({ error: "Job ID and proposal are required." });
+    }
+
+    // Validate Job ID format
+    if (!mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({ error: "Invalid Job ID format." });
     }
 
     // Check if job exists
@@ -71,9 +77,30 @@ const getMyApplications = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch your applications." });
   }
 };
+const rejectApplication = async (req, res) => {
+  try {
+    const { _id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "Invalid application ID" });
+    }
+
+    const application = await ApplicationModel.findByIdAndDelete(_id);
+
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.status(200).json({ message: "Application rejected successfully" });
+  } catch (err) {
+    console.error("Reject Error:", err);
+    res.status(500).json({ error: "Server error rejecting applicant" });
+  }
+};
 
 module.exports = {
   applyToJob,
   getApplicationsByJobId,
   getMyApplications,
+  rejectApplication,
 };

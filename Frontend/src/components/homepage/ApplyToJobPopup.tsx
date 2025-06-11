@@ -32,6 +32,7 @@ export default function ApplyToJobPopup({ jobId, onClose }: Props) {
       },
       body: JSON.stringify({
         jobId,
+        applicantId: localStorage.getItem("userId"), // Ensures applicantId is sent
         proposal: formData.proposal,
       }),
     });

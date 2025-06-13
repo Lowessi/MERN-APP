@@ -5,7 +5,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import { getProfile } from "../../../api/Profile";
 import freelanceBg from "../../../Image/Freelance.jpg";
 
-const RENDER_URL = import.meta.env.BASE_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
 
 const Login = () => {
     const navigate = useNavigate();

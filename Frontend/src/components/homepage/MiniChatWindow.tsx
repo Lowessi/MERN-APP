@@ -19,6 +19,7 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const chatBoxRef = useRef<HTMLDivElement>(null);
+    const [otherUserName, setOtherUserName] = useState("");
 
     useEffect(() => {
         fetch(`${RENDER_URL}/api/chat/messages/${conversation._id}`)
@@ -30,6 +31,11 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
                 }));
                 setMessages(msgs);
             });
+
+        const otherUserId = conversation.participants.find((id: string) => id !== currentUserId);
+        fetch(`${RENDER_URL}/api/userauth/${otherUserId}`)
+            .then((res) => res.json())
+            .then((user) => setOtherUserName(user.name || otherUserId));
 
         socket.emit("joinRoom", currentUserId);
 
@@ -50,7 +56,6 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
         };
     }, [conversation._id, currentUserId]);
 
-    // Auto-scroll to bottom when messages change
     useEffect(() => {
         if (chatBoxRef.current) {
             chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
@@ -84,20 +89,22 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
     };
 
     return (
-        <div className="w-80 h-100 bg-white rounded-lg shadow-md border right-5 flex flex-col relative">
-            <div className="bg-green-600 text-white px-3 py-2 rounded-t-lg flex justify-between items-center text-sm">
-                <span>Chat</span>
+        <div className="w-80 h-96 bg-[#1E222B] text-white rounded-2xl shadow-2xl border border-[#343941] right-6 mb-4 flex flex-col relative">
+            {/* Header */}
+            <div className="bg-[#343941] text-[#DED1B6] px-4 py-2 rounded-t-2xl flex justify-between items-center text-sm font-semibold">
+                <span>Chat with: {otherUserName}</span>
                 <button
                     onClick={onClose}
-                    className="text-white hover:text-red-200"
+                    className="text-[#DED1B6] hover:text-[#948978]"
                 >
                     ✕
                 </button>
             </div>
 
+            {/* Messages */}
             <div
                 ref={chatBoxRef}
-                className="flex-1 overflow-y-auto p-2 space-y-1 text-sm"
+                className="flex-1 overflow-y-auto p-3 space-y-2 text-sm"
             >
                 {messages.map((msg) => (
                     <div
@@ -107,13 +114,15 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
                         }`}
                     >
                         <div
-                            className={`px-3 py-1 rounded-lg max-w-[80%] ${
-                                msg.fromSelf ? "bg-green-100" : "bg-gray-200"
+                            className={`px-3 py-2 rounded-xl max-w-[80%] ${
+                                msg.fromSelf
+                                    ? "bg-[#DED1B6] text-[#1E222B]"
+                                    : "bg-[#343941] text-white"
                             }`}
                         >
                             {msg.text}
                         </div>
-                        <span className="text-[10px] text-gray-500">
+                        <span className="text-[10px] text-gray-400">
                             {new Date(msg.createdAt).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -123,17 +132,18 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
                 ))}
             </div>
 
-            <div className="p-2 flex gap-2 items-center border-t text-sm">
+            {/* Input */}
+            <div className="p-2 flex gap-2 items-center border-t border-[#343941] text-sm bg-[#1E222B]">
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSend()}
                     placeholder="Type a message"
-                    className="flex-1 border px-2 py-1 rounded"
+                    className="flex-1 border border-[#DED1B6] bg-[#343941] text-white px-3 py-1 rounded-xl placeholder:text-[#DED1B6]"
                 />
                 <button
                     onClick={handleSend}
-                    className="bg-green-500 text-white px-2 py-1 rounded"
+                    className="bg-[#DED1B6] hover:bg-[#948978] text-[#1E222B] font-semibold px-4 py-1 rounded-xl"
                 >
                     Send
                 </button>

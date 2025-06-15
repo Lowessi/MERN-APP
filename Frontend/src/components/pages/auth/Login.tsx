@@ -3,134 +3,122 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../context/AuthContext";
 import { getProfile } from "../../../api/Profile";
-import freelanceBg from "../../../Image/Freelance.jpg";
 
 const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
 
 const Login = () => {
-    const navigate = useNavigate();
-    const auth = useContext(AuthContext);
-    const setUser = auth?.setUser;
-    const setToken = auth?.setToken;
+  const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+  const setUser = auth?.setUser;
+  const setToken = auth?.setToken;
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const fetchProfile = async (data: any) => {
-        try {
-            const profile = await getProfile(data.user.id, data.token);
-            if (profile) {
-                navigate("/home");
-            } else {
-                navigate("/edit-profile");
-            }
-        } catch (error: any) {
-            console.error("Error fetching profile:", error.message);
-            navigate("/edit-profile");
-        }
-    };
+  const fetchProfile = async (data: any) => {
+    try {
+      const profile = await getProfile(data.user.id, data.token);
+      if (profile) {
+        navigate("/home");
+      } else {
+        navigate("/edit-profile");
+      }
+    } catch (error: any) {
+      console.error("Error fetching profile:", error.message);
+      navigate("/edit-profile");
+    }
+  };
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-        if (!setUser || !setToken) {
-            console.error("AuthContext is not available.");
-            return;
-        }
+    if (!setUser || !setToken) {
+      console.error("AuthContext is not available.");
+      return;
+    }
 
-        try {
-            const res = await fetch(RENDER_URL + "/api/userauth/signin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ Email: email, Password: password }),
-            });
+    try {
+      const res = await fetch(RENDER_URL + "/api/userauth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Email: email, Password: password }),
+      });
 
-            const data = await res.json();
+      const data = await res.json();
 
-            if (!res.ok) {
-                toast.error(data.error || "Login failed");
-                return;
-            }
+      if (!res.ok) {
+        toast.error(data.error || "Login failed");
+        return;
+      }
 
-            localStorage.setItem("user", JSON.stringify(data.user));
-            localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
 
-            setUser(data.user);
-            setToken(data.token);
+      setUser(data.user);
+      setToken(data.token);
 
-            await fetchProfile(data);
-            toast.success("Login successful!");
-        } catch (error) {
-            console.error("Login error:", error);
-            toast.error("Something went wrong. Please try again.");
-        }
-    };
+      await fetchProfile(data);
+      toast.success("Login successful!");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
 
-    return (
-        <div className="flex min-h-screen">
-            {/* LEFT: Image */}
-            <div className="w-1/2 hidden md:block">
-                <img
-                    src={freelanceBg}
-                    alt="Freelance"
-                    className="object-cover w-full h-full scale-75"
-                />
-            </div>
+  return (
+    <div className="min-h-screen w-full bg-[#1E222B] flex items-center justify-center px-4">
+      <form
+        onSubmit={onSubmit}
+        className="shadow-lg flex flex-col gap-5 items-center p-8 rounded-lg w-full max-w-md"
+        style={{ backgroundColor: "#DED1B6" }}
+      >
+        <h1 className="text-3xl font-bold text-[#343941]">Sign In</h1>
 
-            {/* RIGHT: Login Form */}
-            <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-100 p-8">
-                <form
-                    onSubmit={onSubmit}
-                    className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg"
-                >
-                    <h1 className="text-3xl font-semibold text-green-600 text-center mb-6">
-                        Sign In
-                    </h1>
+        <label htmlFor="email" className="flex flex-col w-full text-[#1E222B]">
+          Email
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border h-12 p-3 rounded-lg w-full mt-2 border-[#343941] focus:ring-2 focus:ring-[#DED1B6]"
+          />
+        </label>
 
-                    <label htmlFor="email" className="block mb-4">
-                        <span className="block mb-1">Email</span>
-                        <input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-green-500"
-                        />
-                    </label>
+        <label htmlFor="password" className="flex flex-col w-full text-[#1E222B]">
+          Password
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="border h-12 p-3 rounded-lg w-full mt-2 border-[#343941] focus:ring-2 focus:ring-[#DED1B6]"
+          />
+        </label>
 
-                    <label htmlFor="password" className="block mb-6">
-                        <span className="block mb-1">Password</span>
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-green-500"
-                        />
-                    </label>
+        <p className="text-center mt-2 text-sm text-[#948978] w-full">
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/register")}
+            className="text-[#343941] cursor-pointer hover:underline"
+          >
+            Sign Up
+          </span>
+        </p>
 
-                    <div className="text-sm text-center mb-4 text-gray-600">
-                        Don't have an account?{" "}
-                        <span
-                            onClick={() => navigate("/register")}
-                            className="text-green-600 cursor-pointer hover:underline"
-                        >
-                            Sign Up
-                        </span>
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="w-full p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                    >
-                        Sign In
-                    </button>
-                </form>
-            </div>
+        <div className="flex gap-6 mt-4 w-full justify-center">
+          <button
+            type="submit"
+            className="w-full md:w-md p-3 rounded-lg bg-[#1E222B] text-white shadow-md hover:bg-[#343941] transition"
+          >
+            Sign In
+          </button>
         </div>
-    );
+      </form>
+    </div>
+  );
 };
 
 export default Login;

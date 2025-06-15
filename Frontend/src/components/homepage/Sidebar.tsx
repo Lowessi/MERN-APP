@@ -17,8 +17,8 @@ const Sidebar = () => {
     const token = auth?.token;
 
     const [profile, setProfile] = useState<ProfileType | null>(null);
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState<string | null>(null); // Error state
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (token) {
@@ -41,7 +41,7 @@ const Sidebar = () => {
                     setError("Failed to load profile");
                     console.error("Failed to load profile:", err);
                 } finally {
-                    setLoading(false); // Stop loading after data is fetched
+                    setLoading(false);
                 }
             };
             fetchProfile();
@@ -49,40 +49,40 @@ const Sidebar = () => {
     }, [token]);
 
     if (!user) {
-        return <div>Loading...</div>;
+        return <div className="text-[#DED1B6]">Loading...</div>;
     }
 
     return (
-        <div className="px-5 py-5 sticky top-0">
-            <aside className="w-60 h-100 p-4 bg-white shadow-sm border border-gray-300 rounded-[15px]">
+        <div className="fixed top-20 left-5 z-40">
+            <aside className="w-80 h-100 p-5 bg-[#1E222B] border border-[#948978] text-[#DED1B6] rounded-2xl shadow-lg">
                 {loading ? (
-                    <div>Loading profile...</div> // Loading placeholder
+                    <div>Loading profile...</div>
                 ) : error ? (
-                    <div className="text-red-600">{error}</div> // Error message
+                    <div className="text-red-500">{error}</div>
                 ) : (
-                    <div className="bg-green-100 rounded-lg p-4 mb-4 text-center">
-                        <p className="mt-2 font-semibold">{profile?.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
-                        <p className="text-sm text-gray-500">
+                    <div className="bg-[#343941] rounded-xl p-4 mb-6 text-center">
+                        <p className="mt-1 font-semibold">{profile?.name}</p>
+                        <p className="text-sm text-[#DED1B6]">{user.email}</p>
+                        <p className="text-sm text-[#DED1B6]">
                             {profile?.title || "—"}
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-[#948978]">
                             {profile?.location || "—"}
                         </p>
                     </div>
                 )}
 
-                <div className="flex flex-col space-y-2 text-sm">
+                <div className="flex items-center flex-col gap-3 text-sm">
                     <Link
                         to="/my-jobs"
-                        className="text-black hover:text-gray-500 hover:underline"
+                        className="hover:text-[#948978] transition-colors"
                     >
                         My Jobs
                     </Link>
                 </div>
 
                 <button
-                    className="mt-6 text-green-700 hover:underline text-sm"
+                    className="mt-6 h-40 w-69 text-[#DED1B6] border border-[#948978] px-3 py-1 rounded hover:bg-[#343941] transition text-sm"
                     onClick={() => navigate("/post-job")}
                 >
                     + Post a free job

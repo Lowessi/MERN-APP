@@ -14,7 +14,7 @@ const LandingLayout = () => {
     }
   }, [user, navigate]);
   return (
-    <div className="h-screen flex flex-col justify-between  bg-[#f3f4f6]">
+    <div className="h-screen flex flex-col justify-between  bg-[#393E46]">
       <Navbar />
 
       <div>

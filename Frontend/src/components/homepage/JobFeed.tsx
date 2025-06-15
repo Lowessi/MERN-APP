@@ -22,9 +22,7 @@ const JobFeed = () => {
     const fetchJobs = async (query = "") => {
         try {
             const url = query
-                ? `${RENDER_URL}/api/jobs/search?query=${encodeURIComponent(
-                      query
-                  )}`
+                ? `${RENDER_URL}/api/jobs/search?query=${encodeURIComponent(query)}`
                 : `${RENDER_URL}/api/jobs`;
 
             const res = await fetch(url, {
@@ -36,8 +34,6 @@ const JobFeed = () => {
             if (!res.ok) throw new Error("Failed to fetch jobs");
 
             const data: Job[] = await res.json();
-
-            // Only show "Open" jobs
             setJobs(data.filter((job) => job.status === "Open"));
         } catch (error) {
             console.error("Error fetching jobs:", error);
@@ -51,9 +47,9 @@ const JobFeed = () => {
     };
 
     return (
-        <div className="py-5">
+        <div className="py-5 pl-64 min-h-screen bg-[#393E46] text-[#DED1B6]">
             <main className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-w-[350px]">
-                <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">
+                <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left text-[#DED1B6]">
                     Top job picks for you
                 </h2>
 
@@ -62,12 +58,12 @@ const JobFeed = () => {
                     placeholder="Search for jobs..."
                     value={searchQuery}
                     onChange={handleSearchChange}
-                    className="w-full mb-6 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                    className="w-full mb-6 p-3 border border-[#948978] rounded-lg bg-[#222831] text-[#DED1B6] placeholder-[#948978] focus:outline-none focus:ring-2 focus:ring-[#948978] transition"
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
                     {jobs.length === 0 ? (
-                        <p className="text-center text-gray-500 col-span-full">
+                        <p className="text-center text-[#948978] col-span-full">
                             No jobs available.
                         </p>
                     ) : (
@@ -77,16 +73,14 @@ const JobFeed = () => {
                                 onClick={() =>
                                     navigate(`/job-preview/${job._id}`)
                                 }
-                                className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition cursor-pointer border border-gray-200 flex flex-col"
+                                className="bg-[#222831] p-5 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition cursor-pointer border border-[#948978] flex flex-col w-full max-w-xs"
                             >
-                                {/* Placeholder image */}
-                                <div className="h-28 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-gray-400 text-sm">
+                                <div className="h-28 bg-[#393E46] text-[#948978] rounded-lg mb-3 flex items-center justify-center text-sm border border-[#948978]">
                                     Image
                                 </div>
 
-                                {/* Title + Status badge */}
                                 <div className="flex justify-between items-center mb-2">
-                                    <h3 className="text-lg font-semibold text-green-600 hover:underline">
+                                    <h3 className="text-lg font-semibold text-[#DED1B6] hover:underline">
                                         {job.Title}
                                     </h3>
                                     <span
@@ -102,15 +96,15 @@ const JobFeed = () => {
                                     </span>
                                 </div>
 
-                                <p className="text-sm text-gray-700 break-words mb-1">
+                                <p className="text-sm text-[#DED1B6] break-words mb-1">
                                     {job.UserId?.Email}
                                 </p>
 
-                                <p className="text-sm text-gray-500 mb-2 line-clamp-3">
+                                <p className="text-sm text-[#948978] mb-2 line-clamp-3">
                                     {job.Description}
                                 </p>
 
-                                <div className="mt-auto text-sm text-gray-600 space-y-1">
+                                <div className="mt-auto text-sm text-[#DED1B6] space-y-1">
                                     <p>
                                         <strong>Requirements:</strong>{" "}
                                         {job.Requirements}
@@ -121,9 +115,7 @@ const JobFeed = () => {
                                     </p>
                                     <p>
                                         <strong>Deadline:</strong>{" "}
-                                        {new Date(
-                                            job.Deadline
-                                        ).toLocaleDateString()}
+                                        {new Date(job.Deadline).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>

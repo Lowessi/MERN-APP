@@ -32,7 +32,7 @@ export default function ApplyToJobPopup({ jobId, onClose }: Props) {
       },
       body: JSON.stringify({
         jobId,
-        applicantId: localStorage.getItem("userId"), // Ensures applicantId is sent
+        applicantId: localStorage.getItem("userId"),
         proposal: formData.proposal,
       }),
     });
@@ -48,10 +48,10 @@ export default function ApplyToJobPopup({ jobId, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
-      <div className="bg-white bg-opacity-95 p-6 rounded-lg shadow-lg w-[90%] max-w-md relative">
+      <div className="bg-[#1E222B] text-[#DED1B6] p-6 rounded-lg shadow-lg w-[90%] max-w-md relative border border-[#343941]">
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-gray-500 hover:text-black text-xl font-bold"
+          className="absolute top-2 right-3 text-[#DED1B6] hover:text-[#948978] text-xl font-bold"
         >
           &times;
         </button>
@@ -62,20 +62,20 @@ export default function ApplyToJobPopup({ jobId, onClose }: Props) {
             value={formData.proposal}
             onChange={handleChange}
             placeholder="Your proposal..."
-            className="w-full border p-2 rounded"
+            className="w-full border border-[#DED1B6] bg-[#343941] text-white px-3 py-2 rounded placeholder:text-[#DED1B6]"
             rows={4}
           />
         </div>
         <div className="flex justify-end space-x-2 mt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            className="px-4 py-2 bg-[#343941] text-[#DED1B6] rounded hover:bg-[#948978] hover:text-white transition"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-[#DED1B6] text-[#1E222B] rounded hover:bg-[#948978] hover:text-white transition font-semibold"
           >
             Submit
           </button>

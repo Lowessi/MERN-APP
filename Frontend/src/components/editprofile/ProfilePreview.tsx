@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { AuthContext } from "../../context/AuthContext";
-import MiniChatWindow from "../homepage/MiniChatWindow"; // ✅ import the mini chat window
+import MiniChatWindow from "../homepage/MiniChatWindow";
 
 const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
 
@@ -13,8 +13,8 @@ const ProfilePreview = () => {
     const { id: profileId } = useParams();
     const [isOwnProfile, setIsOwnProfile] = useState(false);
 
-    const [chatConversation, setChatConversation] = useState<any | null>(null); // ✅ store conversation state
-    const [chatOpen, setChatOpen] = useState(false); // ✅ control mini window open
+    const [chatConversation, setChatConversation] = useState<any | null>(null);
+    const [chatOpen, setChatOpen] = useState(false);
 
     useEffect(() => {
         if (!token) {
@@ -66,7 +66,7 @@ const ProfilePreview = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     senderId: authUser.id,
-                    receiverId: user.userId, // assuming userId is stored in profile
+                    receiverId: user.userId,
                 }),
             });
 
@@ -80,108 +80,93 @@ const ProfilePreview = () => {
 
     if (!user)
         return (
-            <div className="flex justify-center mt-10 text-gray-500 text-lg">
+            <div className="flex justify-center mt-10 text-[#948978] text-lg">
                 Loading profile...
             </div>
         );
 
     return (
-        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6 mt-6 border border-gray-200 relative">
-            {/* Header Section */}
-            <div className="flex items-center gap-4">
-                {/* Avatar */}
-                <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-semibold">
+        <div className="max-w-4xl mx-auto bg-[#1E222B] rounded-xl shadow p-6 mt-6 border border-[#343941] text-[#DED1B6] relative">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-4">
+                <div className="w-14 h-14 rounded-full bg-[#948978] text-white flex items-center justify-center text-xl font-semibold">
                     {user.name?.charAt(0).toUpperCase() ||
                         user.email?.charAt(0).toUpperCase()}
                 </div>
 
-                {/* User Info */}
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-gray-800">
-                        {user.name || "Unnamed Freelancer"}
-                    </h1>
-                    <p className="text-gray-500">
-                        {user.email || "No email provided"}
-                    </p>
-                    <p className="text-gray-500">
-                        {user.location || "No address provided"}
-                    </p>
+                    <h1 className="text-2xl font-bold">{user.name || "Unnamed Freelancer"}</h1>
+                    <p className="text-[#948978]">{user.email || "No email provided"}</p>
+                    <p className="text-[#948978]">{user.location || "No address provided"}</p>
                 </div>
 
-                {/* Edit Button (if own profile) */}
                 {isOwnProfile ? (
                     <button
                         onClick={() => navigate("/edit-profile")}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="bg-[#DED1B6] text-[#1E222B] px-4 py-2 rounded hover:bg-[#948978] hover:text-white transition"
                     >
                         Edit Profile
                     </button>
                 ) : (
                     <button
                         onClick={handleMessageClick}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="bg-[#DED1B6] text-[#1E222B] px-4 py-2 rounded hover:bg-[#948978] hover:text-white transition"
                     >
                         Message
                     </button>
                 )}
             </div>
 
-            <hr className="my-6 border-gray-300" />
+            <hr className="my-6 border-[#343941]" />
 
-            {/* Skills Section */}
+            {/* Skills */}
             <section className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                    Skills
-                </h2>
+                <h2 className="text-xl font-semibold mb-2">Skills</h2>
                 {user.skills?.length ? (
                     <ul className="flex flex-wrap gap-2">
                         {user.skills.map((skill, idx) => (
                             <li
                                 key={idx}
-                                className="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-700 border"
+                                className="bg-[#343941] px-3 py-1 rounded-full text-sm text-[#DED1B6] border border-[#948978]"
                             >
                                 {skill}
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p className="text-gray-500">No skills added.</p>
+                    <p className="text-[#948978]">No skills added.</p>
                 )}
             </section>
 
-            {/* Work Experience Section */}
+            {/* Work Experience */}
             <section>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                    Work Experience
-                </h2>
+                <h2 className="text-xl font-semibold mb-2">Work Experience</h2>
                 {user.workExperience?.length ? (
                     <ul className="space-y-4">
                         {user.workExperience.map((exp, idx) => (
                             <li
                                 key={idx}
-                                className="bg-gray-50 p-4 rounded border"
+                                className="bg-[#222831] p-4 rounded border border-[#343941]"
                             >
-                                <p className="text-lg font-bold text-gray-700">
+                                <p className="text-lg font-bold">
                                     {exp.jobTitle}{" "}
-                                    <span className="text-sm text-gray-500">
+                                    <span className="text-sm text-[#948978]">
                                         at {exp.company}
                                     </span>
                                 </p>
-                                <p className="text-sm text-gray-500 italic">
+                                <p className="text-sm italic text-[#948978]">
                                     {exp.duration}
                                 </p>
-                                <p className="text-gray-700 mt-1">
-                                    {exp.description}
-                                </p>
+                                <p className="mt-1">{exp.description}</p>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p className="text-gray-500">No work experience listed.</p>
+                    <p className="text-[#948978]">No work experience listed.</p>
                 )}
             </section>
 
-            {/* ✅ Mini Chat Window (only if chat is started) */}
+            {/* Chat Window */}
             {chatOpen && chatConversation && authUser && (
                 <div className="fixed bottom-4 right-4 z-50">
                     <MiniChatWindow

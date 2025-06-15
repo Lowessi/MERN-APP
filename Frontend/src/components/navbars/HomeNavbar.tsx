@@ -4,268 +4,208 @@ import { AuthContext } from "../../context/AuthContext";
 import { io, Socket } from "socket.io-client";
 
 interface Notification {
-    _id: string;
-    message: string;
-    isRead: boolean;
-    createdAt: string;
+  _id: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
 }
 
 interface Message {
-    _id: string;
-    senderId: string;
-    text: string;
-    conversationId: string;
-    createdAt: string;
-    receiverId: string;
+  _id: string;
+  senderId: string;
+  text: string;
+  conversationId: string;
+  createdAt: string;
+  receiverId: string;
 }
 
 interface Conversation {
-    _id: string;
-    members: string[];
-    lastMessage: string;
+  _id: string;
+  members: string[];
+  lastMessage: string;
 }
 
 interface User {
-    id: string;
-    email: string;
+  id: string;
+  email: string;
 }
 
 const HomeNavbar = () => {
-    const [initial, setInitial] = useState<string>("?");
-    const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    // const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [initial, setInitial] = useState<string>("?");
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
 
-    const [conversations, setConversations] = useState<Conversation[]>([]);
-    // const [hasNewMessage, setHasNewMessage] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const socket = useRef<Socket | null>(null);
 
-    const dropdownRef = useRef<HTMLDivElement | null>(null);
-    const socket = useRef<Socket | null>(null);
+  const auth = useContext(AuthContext);
+  const signOut = auth?.signOut;
 
-    const auth = useContext(AuthContext);
-    const signOut = auth?.signOut;
+  const storedUser = localStorage.getItem("user");
+  const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+  const userId = user?.id || "";
+  const email = user?.email || "";
 
-    const storedUser = localStorage.getItem("user");
-    const user: User | null = storedUser ? JSON.parse(storedUser) : null;
-    const userId = user?.id || "";
-    const email = user?.email || "";
+  useEffect(() => {
+    if (email) {
+      setInitial(email.charAt(0).toUpperCase());
+    }
+  }, [email]);
 
-    useEffect(() => {
-        if (email) {
-            setInitial(email.charAt(0).toUpperCase());
-        }
-    }, [email]);
+  const fetchConversations = async () => {
+    if (!userId) return;
+    try {
+      const res = await fetch(`/api/conversations/${userId}`);
+      const data = await res.json();
+      setConversations(data.reverse().slice(0, 5));
+    } catch (err) {
+      console.error("Failed to fetch conversations:", err);
+    }
+  };
 
-    // Fetch Notifications
-    //  useEffect(() => {
-    //   const fetchNotifications = async () => {
-    //     if (!userId) return;
-    //     try {
-    //       const res = await fetch(`/api/notifications/${userId}`);
-    //       const data = await res.json();
-    //       setNotifications(data);
-    //       setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
-    //     } catch (err) {
-    //       console.error("Failed to load notifications:", err);
-    //     }
-    //   };
-    //   fetchNotifications();
-    // }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
 
-    // Fetch Recent Conversations
-    const fetchConversations = async () => {
-        if (!userId) return;
-        try {
-            const res = await fetch(`/api/conversations/${userId}`);
-            const data = await res.json();
-            setConversations(data.reverse().slice(0, 5)); // Show last 5
-        } catch (err) {
-            console.error("Failed to fetch conversations:", err);
-        }
+    socket.current = io(import.meta.env.RENDER_URL || "http://localhost:5000");
+    socket.current.emit("joinRoom", userId);
+
+    socket.current.on("receiveNotification", (newNotification: Notification) => {
+      setNotifications((prev) => [newNotification, ...prev]);
+    });
+
+    socket.current.on("getMessage", (message: Message) => {
+      if (message.receiverId === userId) {
+        fetchConversations();
+      }
+    });
+
+    return () => {
+      socket.current?.disconnect();
     };
+  }, [userId]);
 
-    useEffect(() => {
-        if (!userId) return;
-
-        socket.current = io(
-            import.meta.env.RENDER_URL || "http://localhost:5000"
-        );
-        socket.current.emit("joinRoom", userId);
-
-        // Listen for new notifications
-        socket.current.on(
-            "receiveNotification",
-            (newNotification: Notification) => {
-                setNotifications((prev) => [newNotification, ...prev]);
-                // setUnreadCount((prev) => prev + 1);
-            }
-        );
-
-        // Listen for new messages
-        socket.current.on("getMessage", (message: Message) => {
-            if (message.receiverId === userId) {
-                // setHasNewMessage(true);
-                fetchConversations(); // Refresh latest convos
-            }
-        });
-
-        return () => {
-            socket.current?.disconnect();
-        };
-    }, [userId]);
-
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(e.target as Node)
-            ) {
-                setDropdownOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    // const handleNotificationClick = async () => {
-    //   setDropdownOpen(!dropdownOpen);
-    //   if (unreadCount > 0) {
-    //     try {
-    //       await fetch(`/api/notifications/mark-read/${userId}`, {
-    //         method: "PUT",
-    //       });
-    //       setUnreadCount(0);
-    //       setNotifications((prev) =>
-    //         prev.map((notif) => ({ ...notif, isRead: true }))
-    //       );
-    //     } catch (err) {
-    //       console.error("Failed to mark notifications as read:", err);
-    //     }
-    //   }
-    //   if (hasNewMessage) {
-    //     setHasNewMessage(false);
-    //   }
-    // };
-
-    const handleSignOut = () => {
-        signOut?.();
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    return (
-        <div className="sticky top-0 z-50">
-            <nav className="bg-green-500 shadow-sm px-4 py-2 flex items-center justify-between">
-                {/* Left: Logo */}
-                <div className="flex pl-20 items-center gap-4">
-                    <div className="text-white text-2xl font-bold">Talent</div>
-                </div>
+  const handleSignOut = () => {
+    signOut?.();
+  };
 
-                {/* Center: Links */}
-                <div className="hidden sm:flex items-center gap-8 text-sm text-white">
-                    <Link to="/home" className="hover:text-white">
-                        Home
-                    </Link>
-                    <Link to="/freelancer" className="hover:text-white">
-                        Freelancer
-                    </Link>
-
-                    {/* <div
-            className="relative cursor-pointer"
-            onClick={handleNotificationClick}
-          >
-            <span className="hover:text-white">Inbox</span>
-            {(unreadCount > 0 || hasNewMessage) && (
-              <span className="absolute -top-1 -right-3 bg-red-500 text-white text-xs rounded-full px-1.5">
-                ●
-              </span>
-            )}
-          </div> */}
-                </div>
-
-                {/* Right: Avatar */}
-                <div className="relative pr-20" ref={dropdownRef}>
-                    <div
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="w-8 h-8 bg-green-700 text-white rounded-full flex items-center justify-center font-bold cursor-pointer"
-                    >
-                        {initial}
-                    </div>
-
-                    {dropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-md py-2 z-50">
-                            <Link
-                                to="/profile-preview"
-                                className="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
-                            >
-                                View Profile
-                            </Link>
-                            <Link
-                                to="/edit-profile"
-                                className="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700"
-                            >
-                                Edit Profile
-                            </Link>
-                            <hr className="my-1" />
-
-                            {/* Notifications */}
-                            <div className="px-4 py-1 text-xs font-semibold text-gray-500">
-                                Notifications
-                            </div>
-                            {notifications.length > 0 ? (
-                                notifications.slice(0, 3).map((notif) => (
-                                    <div
-                                        key={notif._id}
-                                        className={`px-4 py-1 text-sm truncate hover:bg-gray-100 ${
-                                            notif.isRead
-                                                ? "text-gray-500"
-                                                : "text-black font-medium"
-                                        }`}
-                                    >
-                                        {notif.message}
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="px-4 py-1 text-sm text-gray-400">
-                                    No notifications
-                                </div>
-                            )}
-
-                            {/* Messages */}
-                            <div className="px-4 pt-3 text-xs font-semibold text-gray-500">
-                                Messages
-                            </div>
-                            {conversations.length > 0 ? (
-                                conversations.map((convo) => (
-                                    <Link
-                                        key={convo._id}
-                                        to={`/messenger/${convo._id}`}
-                                        className="block px-4 py-1 text-sm hover:bg-gray-100 truncate text-gray-700"
-                                    >
-                                        Chat with{" "}
-                                        {convo.members.find(
-                                            (id) => id !== userId
-                                        )}
-                                    </Link>
-                                ))
-                            ) : (
-                                <div className="px-4 py-1 text-sm text-gray-400">
-                                    No recent messages
-                                </div>
-                            )}
-
-                            <hr className="my-2" />
-                            <button
-                                onClick={handleSignOut}
-                                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-600"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </nav>
+  return (
+    <div className="sticky top-0 z-50">
+      <nav className="bg-[#1E222B] shadow-sm px-8 py-4 flex items-center justify-between">
+        {/* Left: Logo */}
+        <div className="flex pl-20 items-center gap-4">
+          <div className="text-[#DED1B6] text-3xl font-bold">
+            <Link to="/">Talent</Link>
+          </div>
         </div>
-    );
+
+        {/* Center: Navigation Links */}
+        <div className="hidden sm:flex items-center gap-10 text-base text-[#DED1B6]">
+          <Link to="/home" className="hover:text-[#948978] transition">
+            Home
+          </Link>
+          <Link to="/freelancer" className="hover:text-[#948978] transition">
+            Freelancer
+          </Link>
+            <Link to="/home/about" className="hover:text-[#948978] transition">
+            About Us
+            </Link>
+            <Link to="/home/contact" className="hover:text-[#948978] transition">
+            Contact
+            </Link>
+        </div>
+
+        {/* Right: User Avatar Dropdown */}
+        <div className="relative pr-20" ref={dropdownRef}>
+          <div
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="w-10 h-10 bg-[#343941] text-[#DED1B6] rounded-full flex items-center justify-center font-bold cursor-pointer text-base"
+          >
+            {initial}
+          </div>
+
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-72 bg-[#213448] border-1 shadow-lg rounded-md py-2 z-50">
+              <Link
+                to="/profile-preview"
+                className="block px-4 py-2 hover:bg-[#003448] text-sm text-[#948978]"
+              >
+                View Profile
+              </Link>
+              <Link
+                to="/edit-profile"
+                className="block px-4 py-2 hover:bg-[#003448] text-sm text-[#948978]"
+              >
+                Edit Profile
+              </Link>
+              <hr className="my-1" />
+
+              {/* Notifications */}
+              <div className="px-4 py-1 text-xs font-semibold text-[#948978]">
+                Notifications
+              </div>
+              {notifications.length > 0 ? (
+                notifications.slice(0, 3).map((notif) => (
+                  <div
+                    key={notif._id}
+                    className={`px-4 py-1 text-sm truncate hover:bg-[#DED1B6] ${
+                      notif.isRead
+                        ? "text-[#948978]"
+                        : "text-black font-medium"
+                    }`}
+                  >
+                    {notif.message}
+                  </div>
+                ))
+              ) : (
+                <div className="px-4 py-1 text-sm text-[#948978]">
+                  No notifications
+                </div>
+              )}
+
+              {/* Messages */}
+              <div className="px-4 pt-3 text-xs font-semibold text-[#948978]">
+                Messages
+              </div>
+              {conversations.length > 0 ? (
+                conversations.map((convo) => (
+                  <Link
+                    key={convo._id}
+                    to={`/messenger/${convo._id}`}
+                    className="block px-4 py-1 text-sm hover:bg-[#DED1B6] truncate text-[#343941]"
+                  >
+                    Chat with {convo.members.find((id) => id !== userId)}
+                  </Link>
+                ))
+              ) : (
+                <div className="px-4 py-1 text-sm text-[#948978]">
+                  No recent messages
+                </div>
+              )}
+
+              <hr className="my-2" />
+              <button
+                onClick={handleSignOut}
+                className="block w-full text-left px-4 py-2 hover:bg-[#003448] text-sm text-red-600"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </nav>
+    </div>
+  );
 };
 
 export default HomeNavbar;

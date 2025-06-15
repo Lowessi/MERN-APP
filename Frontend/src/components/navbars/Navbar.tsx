@@ -8,10 +8,10 @@ const Navbar = () => {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="py-2 border-b border-b-[#597445] bg-white shadow-md sticky top-0 z-50">
-      <nav className="flex justify-between items-center max-w-7xl mx-auto">
+    <div className="py-2 border-b border-b-[#343941] bg-[#1E222B] shadow-md sticky top-0 z-50">
+      <nav className="flex justify-between items-center max-w-7xl mx-auto px-4">
         {/* Logo */}
-        <div className="text-2xl font-semibold text-green-700">
+        <div className="text-2xl font-semibold text-[#DED1B6]">
           <Link to="/">Talent</Link>
         </div>
 
@@ -19,31 +19,31 @@ const Navbar = () => {
         <div className="hidden md:flex gap-10 font-semibold items-center">
           <Link
             to="/"
-            className="text-green-600  hover:text-black hover:underline"
+            className="text-[#DED1B6] hover:text-[#948978] hover:underline"
           >
             Home
           </Link>
           <Link
             to="/login"
-            className="text-green-600 hover:text-black hover:underline"
+            className="text-[#DED1B6] hover:text-[#948978] hover:underline"
           >
             Jobs
           </Link>
           <Link
             to="/login"
-            className="text-green-600 hover:text-black hover:underline"
+            className="text-[#DED1B6] hover:text-[#948978] hover:underline"
           >
             Post a Job
           </Link>
           <Link
             to="/contact"
-            className="text-green-600 hover:text-black hover:underline"
+            className="text-[#DED1B6] hover:text-[#948978] hover:underline"
           >
             Contact
           </Link>
           <Link
             to="/about"
-            className="text-green-600  hover:text-black hover:underline"
+            className="text-[#DED1B6] hover:text-[#948978] hover:underline"
           >
             About us
           </Link>
@@ -51,13 +51,13 @@ const Navbar = () => {
           <section className="flex gap-5 pl-5">
             <button
               onClick={() => navigate("/register")}
-              className="border border-[#597445] p-2 rounded-xl bg-green-700 text-white hover:bg-[#4a6735] transition"
+              className="border border-[#DED1B6] px-4 py-2 rounded-xl bg-[#DED1B6] text-[#1E222B] font-medium hover:bg-[#948978] transition"
             >
               Join now
             </button>
             <button
               onClick={() => navigate("/login")}
-              className="border border-[#597445] p-2 rounded-xl text-[#597445] hover:bg-[#f0f8e0] transition"
+              className="border border-[#DED1B6] px-4 py-2 rounded-xl text-[#DED1B6] font-medium hover:bg-[#343941] transition"
             >
               Signin
             </button>
@@ -68,7 +68,7 @@ const Navbar = () => {
         <div className="md:hidden">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="text-2xl text-[#597445]"
+            className="text-2xl text-[#DED1B6]"
           >
             {menuOpen ? "✕" : "☰"}
           </button>
@@ -77,39 +77,39 @@ const Navbar = () => {
 
       {/* Mobile Dropdown */}
       {menuOpen && (
-        <div className="md:hidden mt-4 px-4 space-y-3">
+        <div className="md:hidden mt-4 px-4 space-y-3 text-[#DED1B6]">
           <Link
             to="/"
             onClick={closeMenu}
-            className="block text-[#597445] hover:text-black hover:underline"
+            className="block hover:text-[#948978] hover:underline"
           >
             Home
           </Link>
           <Link
             to="/login"
             onClick={closeMenu}
-            className="block text-[#597445] hover:text-black hover:underline"
+            className="block hover:text-[#948978] hover:underline"
           >
             Jobs
           </Link>
           <Link
             to="/login"
             onClick={closeMenu}
-            className="block text-[#597445] hover:text-black hover:underline"
+            className="block hover:text-[#948978] hover:underline"
           >
             Post a Job
           </Link>
           <Link
             to="/contact"
             onClick={closeMenu}
-            className="block text-[#597445] hover:text-black hover:underline"
+            className="block hover:text-[#948978] hover:underline"
           >
             Contact
           </Link>
           <Link
             to="/about"
             onClick={closeMenu}
-            className="block text-[#597445] hover:text-black hover:underline"
+            className="block hover:text-[#948978] hover:underline"
           >
             About us
           </Link>
@@ -120,7 +120,7 @@ const Navbar = () => {
                 closeMenu();
                 navigate("/register");
               }}
-              className="w-full border border-[#597445] p-2 rounded-xl bg-[#597445] text-white hover:bg-[#4a6735] transition"
+              className="w-full border border-[#DED1B6] p-2 rounded-xl bg-[#DED1B6] text-[#1E222B] font-medium hover:bg-[#948978] transition"
             >
               Join now
             </button>
@@ -129,7 +129,7 @@ const Navbar = () => {
                 closeMenu();
                 navigate("/login");
               }}
-              className="w-full border border-[#597445] p-2 rounded-xl text-[#597445] hover:bg-[#f0f8e0] transition"
+              className="w-full border border-[#DED1B6] p-2 rounded-xl text-[#DED1B6] font-medium hover:bg-[#343941] transition"
             >
               Signin
             </button>

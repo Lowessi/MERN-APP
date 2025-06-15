@@ -5,7 +5,7 @@ import { Job } from "../../interfaces/Job";
 import MiniChatWindow from "../homepage/MiniChatWindow";
 import ApplyToJobPopup from "../homepage/ApplyToJobPopup";
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const JobPreview = () => {
     const { id } = useParams<{ id: string }>();
@@ -108,14 +108,16 @@ const JobPreview = () => {
                 <div className="w-full lg:w-[380px] bg-[#393E46] p-6 rounded-xl border border-[#948978] shadow-md">
                     <h2 className="text-xl font-bold mb-4">Job Summary</h2>
                     <p className="text-sm mb-2">
-                        <span className="font-semibold">Budget:</span> {job.Currency} {job.Budget}
+                        <span className="font-semibold">Budget:</span>{" "}
+                        {job.Currency} {job.Budget}
                     </p>
                     <p className="text-sm mb-2">
                         <span className="font-semibold">Deadline:</span>{" "}
                         {new Date(job.Deadline).toLocaleDateString()}
                     </p>
                     <p className="text-sm">
-                        <span className="font-semibold">Posted by:</span> {job.UserId?.Email || "Unknown"}
+                        <span className="font-semibold">Posted by:</span>{" "}
+                        {job.UserId?.Email || "Unknown"}
                     </p>
                 </div>
 
@@ -132,14 +134,22 @@ const JobPreview = () => {
 
                     {/* Description */}
                     <section className="mb-4">
-                        <h2 className="text-lg font-semibold mb-1">Description</h2>
-                        <p className="text-sm text-[#DED1B6]">{job.Description}</p>
+                        <h2 className="text-lg font-semibold mb-1">
+                            Description
+                        </h2>
+                        <p className="text-sm text-[#DED1B6]">
+                            {job.Description}
+                        </p>
                     </section>
 
                     {/* Requirements */}
                     <section className="mb-4">
-                        <h2 className="text-lg font-semibold mb-1">Requirements</h2>
-                        <p className="text-sm text-[#DED1B6]">{job.Requirements}</p>
+                        <h2 className="text-lg font-semibold mb-1">
+                            Requirements
+                        </h2>
+                        <p className="text-sm text-[#DED1B6]">
+                            {job.Requirements}
+                        </p>
                     </section>
 
                     {/* Buttons */}

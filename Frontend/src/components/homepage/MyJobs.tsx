@@ -18,7 +18,7 @@ type ApplicantType = {
     proposal: string;
 };
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const MyJobs = () => {
     const { token } = useContext(AuthContext) || {};
@@ -49,7 +49,8 @@ const MyJobs = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm("Are you sure you want to delete this job?")) return;
+        if (!window.confirm("Are you sure you want to delete this job?"))
+            return;
         try {
             const res = await fetch(`${RENDER_URL}/api/jobs/${id}`, {
                 method: "DELETE",
@@ -79,7 +80,9 @@ const MyJobs = () => {
 
             setJobs((prev) =>
                 prev.map((job) =>
-                    job._id === jobId ? { ...job, status: updatedJob.status } : job
+                    job._id === jobId
+                        ? { ...job, status: updatedJob.status }
+                        : job
                 )
             );
         } catch (err) {
@@ -89,9 +92,12 @@ const MyJobs = () => {
 
     const fetchApplicants = async (jobId: string) => {
         try {
-            const res = await fetch(`${RENDER_URL}/api/applications/job/${jobId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await fetch(
+                `${RENDER_URL}/api/applications/job/${jobId}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
 
             if (!res.ok) throw new Error("Failed to fetch applicants");
             const data = await res.json();
@@ -102,18 +108,26 @@ const MyJobs = () => {
         }
     };
 
-    const handleApplicantAction = async (applicantId: string, action: "reject") => {
+    const handleApplicantAction = async (
+        applicantId: string,
+        action: "reject"
+    ) => {
         try {
             if (action !== "reject") return;
 
-            const res = await fetch(`${RENDER_URL}/api/applications/${applicantId}/reject`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await fetch(
+                `${RENDER_URL}/api/applications/${applicantId}/reject`,
+                {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
 
             if (!res.ok) throw new Error("Failed to reject applicant");
 
-            setApplicants((prev) => prev.filter((app) => app._id !== applicantId));
+            setApplicants((prev) =>
+                prev.filter((app) => app._id !== applicantId)
+            );
         } catch (err) {
             alert("Error rejecting applicant");
         }
@@ -137,7 +151,9 @@ const MyJobs = () => {
                     </div>
 
                     {jobs.length === 0 ? (
-                        <p className="text-gray-400">You haven't posted any jobs yet.</p>
+                        <p className="text-gray-400">
+                            You haven't posted any jobs yet.
+                        </p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                             {jobs.map((job) => (
@@ -157,40 +173,59 @@ const MyJobs = () => {
                                         </p>
                                         <p className="text-sm mb-4">
                                             Deadline:{" "}
-                                            {new Date(job.Deadline).toLocaleDateString()}
+                                            {new Date(
+                                                job.Deadline
+                                            ).toLocaleDateString()}
                                         </p>
                                         <p className="text-sm mb-2">
                                             Status:
                                             <select
                                                 value={job.status}
                                                 onChange={(e) =>
-                                                    handleStatusChange(job._id, e.target.value)
+                                                    handleStatusChange(
+                                                        job._id,
+                                                        e.target.value
+                                                    )
                                                 }
                                                 className="ml-2 bg-[#343941] text-[#DED1B6] border border-[#DED1B6] px-2 py-1 rounded"
                                             >
-                                                <option value="Open">Open</option>
-                                                <option value="On Work">On Work</option>
-                                                <option value="Completed">Completed</option>
+                                                <option value="Open">
+                                                    Open
+                                                </option>
+                                                <option value="On Work">
+                                                    On Work
+                                                </option>
+                                                <option value="Completed">
+                                                    Completed
+                                                </option>
                                             </select>
                                         </p>
                                     </div>
                                     <div className="flex justify-between">
                                         <div className="mt-auto space-x-2">
                                             <button
-                                                onClick={() => navigate(`/edit-jobs/${job._id}`)}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/edit-jobs/${job._id}`
+                                                    )
+                                                }
                                                 className="px-3 py-1 bg-[#DED1B6] text-[#1E222B] rounded hover:bg-[#948978] transition"
                                             >
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(job._id)}
+                                                onClick={() =>
+                                                    handleDelete(job._id)
+                                                }
                                                 className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
                                             >
                                                 Delete
                                             </button>
                                         </div>
                                         <button
-                                            onClick={() => fetchApplicants(job._id)}
+                                            onClick={() =>
+                                                fetchApplicants(job._id)
+                                            }
                                             className="rounded bg-[#DED1B6] text-[#1E222B] shadow px-3 py-1 hover:bg-[#948978]"
                                         >
                                             Applicants
@@ -205,7 +240,9 @@ const MyJobs = () => {
                 {selectedJobId && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <div className="bg-[#343941] text-[#DED1B6] p-6 rounded-lg shadow-lg w-96">
-                            <h2 className="text-xl font-bold mb-4">Applicants</h2>
+                            <h2 className="text-xl font-bold mb-4">
+                                Applicants
+                            </h2>
                             {applicants.length === 0 ? (
                                 <p>No applicants yet.</p>
                             ) : (
@@ -215,15 +252,20 @@ const MyJobs = () => {
                                         className="border border-[#DED1B6] p-4 mb-2 rounded"
                                     >
                                         <p>
-                                            <strong>Email:</strong> {applicant.userId.Email}
+                                            <strong>Email:</strong>{" "}
+                                            {applicant.userId.Email}
                                         </p>
                                         <p>
-                                            <strong>Proposal:</strong> {applicant.proposal}
+                                            <strong>Proposal:</strong>{" "}
+                                            {applicant.proposal}
                                         </p>
 
                                         <button
                                             onClick={() =>
-                                                handleApplicantAction(applicant._id, "reject")
+                                                handleApplicantAction(
+                                                    applicant._id,
+                                                    "reject"
+                                                )
                                             }
                                             className="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                                         >

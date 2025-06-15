@@ -8,7 +8,7 @@ type ProfileType = {
     location: string;
 };
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const Sidebar = () => {
     const navigate = useNavigate();

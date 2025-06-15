@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { Job } from "../../interfaces/Job";
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const JobFeed = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -22,7 +22,9 @@ const JobFeed = () => {
     const fetchJobs = async (query = "") => {
         try {
             const url = query
-                ? `${RENDER_URL}/api/jobs/search?query=${encodeURIComponent(query)}`
+                ? `${RENDER_URL}/api/jobs/search?query=${encodeURIComponent(
+                      query
+                  )}`
                 : `${RENDER_URL}/api/jobs`;
 
             const res = await fetch(url, {
@@ -115,7 +117,9 @@ const JobFeed = () => {
                                     </p>
                                     <p>
                                         <strong>Deadline:</strong>{" "}
-                                        {new Date(job.Deadline).toLocaleDateString()}
+                                        {new Date(
+                                            job.Deadline
+                                        ).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>

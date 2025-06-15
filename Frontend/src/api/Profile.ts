@@ -1,4 +1,4 @@
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 const URL = RENDER_URL + "/api/profile";
 
 const getProfile = async (userId: string, token: string) => {

@@ -11,7 +11,7 @@ interface JobFormData {
     Currency: string;
 }
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const PostJob = () => {
     const [formData, setFormData] = useState<JobFormData>({
@@ -168,9 +168,7 @@ const PostJob = () => {
                         className="w-full p-2 rounded bg-[#1E222B] text-[#DED1B6] border border-[#948978]"
                     />
                     {errors.Budget && (
-                        <p className="text-red-400 text-sm">
-                            {errors.Budget}
-                        </p>
+                        <p className="text-red-400 text-sm">{errors.Budget}</p>
                     )}
 
                     <select

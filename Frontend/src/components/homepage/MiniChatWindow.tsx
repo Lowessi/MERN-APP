@@ -9,7 +9,7 @@ interface MiniChatProps {
     onClose: () => void;
 }
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const MiniChatWindow: React.FC<MiniChatProps> = ({
     conversation,
@@ -32,7 +32,9 @@ const MiniChatWindow: React.FC<MiniChatProps> = ({
                 setMessages(msgs);
             });
 
-        const otherUserId = conversation.participants.find((id: string) => id !== currentUserId);
+        const otherUserId = conversation.participants.find(
+            (id: string) => id !== currentUserId
+        );
         fetch(`${RENDER_URL}/api/userauth/${otherUserId}`)
             .then((res) => res.json())
             .then((user) => setOtherUserName(user.name || otherUserId));

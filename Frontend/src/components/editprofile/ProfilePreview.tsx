@@ -4,7 +4,7 @@ import { User } from "../../interfaces/User";
 import { AuthContext } from "../../context/AuthContext";
 import MiniChatWindow from "../homepage/MiniChatWindow";
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const ProfilePreview = () => {
     const [user, setUser] = useState<User | null>(null);
@@ -95,9 +95,15 @@ const ProfilePreview = () => {
                 </div>
 
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold">{user.name || "Unnamed Freelancer"}</h1>
-                    <p className="text-[#948978]">{user.email || "No email provided"}</p>
-                    <p className="text-[#948978]">{user.location || "No address provided"}</p>
+                    <h1 className="text-2xl font-bold">
+                        {user.name || "Unnamed Freelancer"}
+                    </h1>
+                    <p className="text-[#948978]">
+                        {user.email || "No email provided"}
+                    </p>
+                    <p className="text-[#948978]">
+                        {user.location || "No address provided"}
+                    </p>
                 </div>
 
                 {isOwnProfile ? (

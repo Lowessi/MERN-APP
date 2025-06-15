@@ -17,7 +17,9 @@ const ApplicantPopup: React.FC<ApplicantPopupProps> = ({
     setApplicants,
     setSelectedJobId,
 }) => {
-    const [updatedApplicants, setUpdatedApplicants] = useState<ApplicantType[]>([]);
+    const [updatedApplicants, setUpdatedApplicants] = useState<ApplicantType[]>(
+        []
+    );
 
     useEffect(() => {
         setUpdatedApplicants(applicants);
@@ -25,14 +27,20 @@ const ApplicantPopup: React.FC<ApplicantPopupProps> = ({
 
     const handleApplicantAction = async (_id: string) => {
         try {
-            const API_BASE_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+            const API_BASE_URL =
+                import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
-            const res = await fetch(`${API_BASE_URL}/api/applications/${_id}/reject`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const res = await fetch(
+                `${API_BASE_URL}/api/applications/${_id}/reject`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
 
             if (!res.ok) throw new Error("Failed to reject applicant");
 
@@ -64,7 +72,9 @@ const ApplicantPopup: React.FC<ApplicantPopupProps> = ({
                             </p>
                             <div className="flex space-x-2 mt-2">
                                 <button
-                                    onClick={() => handleApplicantAction(applicant._id)}
+                                    onClick={() =>
+                                        handleApplicantAction(applicant._id)
+                                    }
                                     className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded transition"
                                 >
                                     Reject

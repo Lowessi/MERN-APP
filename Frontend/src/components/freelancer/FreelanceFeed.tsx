@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../interfaces/User";
 import { AuthContext } from "../../context/AuthContext";
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const FreelancerFeed = () => {
     const [freelancers, setFreelancers] = useState<User[]>([]);

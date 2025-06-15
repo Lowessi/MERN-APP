@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const EditJob = () => {
     const { id } = useParams();
@@ -61,7 +61,12 @@ const EditJob = () => {
         }
     };
 
-    if (loading) return <p className="text-center mt-20 text-[#948978]">Loading job details...</p>;
+    if (loading)
+        return (
+            <p className="text-center mt-20 text-[#948978]">
+                Loading job details...
+            </p>
+        );
     if (error) return <p className="text-red-500 text-center mt-20">{error}</p>;
 
     return (
@@ -74,11 +79,15 @@ const EditJob = () => {
                     &larr; Back
                 </button>
 
-                <h2 className="text-3xl font-bold mb-6 text-center">Edit Job</h2>
+                <h2 className="text-3xl font-bold mb-6 text-center">
+                    Edit Job
+                </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium mb-1 text-[#DED1B6]">Title</label>
+                        <label className="block text-sm font-medium mb-1 text-[#DED1B6]">
+                            Title
+                        </label>
                         <input
                             type="text"
                             value={title}
@@ -89,7 +98,9 @@ const EditJob = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-1 text-[#DED1B6]">Description</label>
+                        <label className="block text-sm font-medium mb-1 text-[#DED1B6]">
+                            Description
+                        </label>
                         <textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -101,18 +112,24 @@ const EditJob = () => {
 
                     <div className="grid sm:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium mb-1 text-[#DED1B6]">Budget</label>
+                            <label className="block text-sm font-medium mb-1 text-[#DED1B6]">
+                                Budget
+                            </label>
                             <input
                                 type="number"
                                 value={budget}
-                                onChange={(e) => setBudget(Number(e.target.value))}
+                                onChange={(e) =>
+                                    setBudget(Number(e.target.value))
+                                }
                                 required
                                 className="w-full p-3 rounded-lg bg-[#1E222B] border border-[#948978] text-[#DED1B6] focus:outline-none focus:ring-2 focus:ring-[#948978]"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1 text-[#DED1B6]">Deadline</label>
+                            <label className="block text-sm font-medium mb-1 text-[#DED1B6]">
+                                Deadline
+                            </label>
                             <input
                                 type="date"
                                 value={deadline}

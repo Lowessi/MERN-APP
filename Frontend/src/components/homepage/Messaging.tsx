@@ -13,13 +13,15 @@ interface Conversation {
     participants: string[];
 }
 
-const RENDER_URL = import.meta.env.RENDER_URL || "http://localhost:5000";
+const RENDER_URL = import.meta.env.VITE_RENDER_URL || "http://localhost:5000";
 
 const Messaging = ({ userId }: { userId: string }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState<User[]>([]);
-    const [conversationList, setConversationList] = useState<Conversation[]>([]);
+    const [conversationList, setConversationList] = useState<Conversation[]>(
+        []
+    );
     const [openChats, setOpenChats] = useState<Conversation[]>([]);
 
     useEffect(() => {
@@ -50,13 +52,17 @@ const Messaging = ({ userId }: { userId: string }) => {
         const value = e.target.value;
         setSearchTerm(value);
         if (value.trim() === "") return;
-        fetch(`${RENDER_URL}/api/userauth/search?query=${value}&userId=${userId}`)
+        fetch(
+            `${RENDER_URL}/api/userauth/search?query=${value}&userId=${userId}`
+        )
             .then((res) => res.json())
             .then(setSearchResults);
     };
 
     return (
-        <div className="fixed bottom-15 right-2 z-50"> {/* lifted a bit */}
+        <div className="fixed bottom-15 right-2 z-50">
+            {" "}
+            {/* lifted a bit */}
             <div className="flex flex-row-reverse items-end gap-2 relative">
                 {/* Messenger Button */}
                 <div className="z-50">
@@ -90,7 +96,9 @@ const Messaging = ({ userId }: { userId: string }) => {
 
                             <hr className="my-2 border-[#DED1B6]" />
 
-                            <p className="font-semibold mb-1 text-[#DED1B6]">Conversations:</p>
+                            <p className="font-semibold mb-1 text-[#DED1B6]">
+                                Conversations:
+                            </p>
                             <ul className="space-y-1 max-h-40 overflow-y-auto">
                                 {conversationList.map((convo) => {
                                     const otherUserId = convo.participants.find(
@@ -100,8 +108,13 @@ const Messaging = ({ userId }: { userId: string }) => {
                                         <li
                                             key={convo._id}
                                             onClick={() =>
-                                                !openChats.find((c) => c._id === convo._id) &&
-                                                setOpenChats((prev) => [...prev, convo])
+                                                !openChats.find(
+                                                    (c) => c._id === convo._id
+                                                ) &&
+                                                setOpenChats((prev) => [
+                                                    ...prev,
+                                                    convo,
+                                                ])
                                             }
                                             className="cursor-pointer hover:bg-[#343941] px-2 py-1 rounded text-white"
                                         >

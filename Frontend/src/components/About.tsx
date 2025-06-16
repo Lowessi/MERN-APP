@@ -1,24 +1,27 @@
+import imgLian from "../Image/lian.jpg";
+import imgJadi from "../Image/jadi.jpg";
+import imgLowis from "../Image/Lowis.jpg";
 const team = [
   {
     name: "Lian Emmanuel Villaluz Bugtai",
     role: "Project Owner",
     education: "Bachelor of science in Information Technology",
     bio: "I’m still new to management, but I’ll do my best to manage the team.",
-    image: "20",
+    image: imgLian,
   },
   {
     name: "Louise Czar Awit",
     role: "Lead Programmer",
     education: "Bachelor of science in Information Technology",
     bio: "I’m still new, but I’ll do my best to be your programmer.",
-    image: "21",
+    image: imgLowis,
   },
   {
-    name: "Edwin Jade Suerto",
+    name: "Edwin Jade Orogan Suerto",
     role: "Tester",
     education: "Bachelor of science in Information Technology",
     bio: "I’m still new to testing, but I’ll do my best to maintain your trust.",
-    image: "23",
+    image: imgJadi,
   },
 ];
 
